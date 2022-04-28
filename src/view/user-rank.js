@@ -1,15 +1,15 @@
 import { createElement } from '../render.js';
 
-const createNewFilterTemplate = () => (
+const createUserRatingTemplate = () => (
   `<section class="header__profile profile">
     <p class="profile__rating">Movie Buff</p>
     <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
   </section>`
 );
 
-export default class NewFilterView {
+export default class UserRatingView {
   getTemplate() {
-    return createNewFilterTemplate();
+    return createUserRatingTemplate();
   }
 
   getElement() {

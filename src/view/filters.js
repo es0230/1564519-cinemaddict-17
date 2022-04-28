@@ -1,6 +1,6 @@
 import { createElement } from '../render.js';
 
-const createNewFilterTemplate = () => (
+const createFilterTemplate = () => (
   `<ul class="sort">
     <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
     <li><a href="#" class="sort__button">Sort by date</a></li>
@@ -8,9 +8,9 @@ const createNewFilterTemplate = () => (
   </ul>`
 );
 
-export default class NewFilterView {
+export default class FilterView {
   getTemplate() {
-    return createNewFilterTemplate();
+    return createFilterTemplate();
   }
 
   getElement() {
