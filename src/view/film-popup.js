@@ -116,23 +116,26 @@ const createFilmPopupTemplate = (filmCard) => {
 };
 
 export default class FilmPopupView {
+  #element = null;
+  #filmCard = null;
+
   constructor (filmCard) {
-    this.filmCard = filmCard;
+    this.#filmCard = filmCard;
   }
 
-  getTemplate() {
-    return createFilmPopupTemplate(this.filmCard);
+  get template() {
+    return createFilmPopupTemplate(this.#filmCard);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
