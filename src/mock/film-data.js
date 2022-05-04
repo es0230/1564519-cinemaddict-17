@@ -38,6 +38,7 @@ const generateFilmDescription = () => {
   }
   return `${filmDescription}.`;
 };
+
 const generateFilm = () => {
   const filmNumber = getRandomInteger(0, filmPostersSrcs.length - 1);
   return {
