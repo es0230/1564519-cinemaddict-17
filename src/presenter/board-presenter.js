@@ -9,6 +9,32 @@ export default class FilmsPresenter {
   #container = null;
   #cardModel = null;
   #filmCards = null;
+  #renderFilmCard = (filmCard) => {
+    const filmCardComponent = new FilmCardView(filmCard);
+
+    render(filmCardComponent, this.#container.querySelector('.films-list__container'));
+  };
+
+  #renderFilmPopup = (filmCard) => {
+    const bodyElement = document.querySelector('body');
+    const filmPopupComponent = new FilmPopupView(filmCard);
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        filmPopupComponent.element.remove();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    render(filmPopupComponent, bodyElement);
+
+    const closeButton = filmPopupComponent.element.querySelector('.film-details__close-btn');
+    closeButton.addEventListener('click', () => {
+      filmPopupComponent.element.remove();
+    });
+    document.addEventListener('keydown', onEscKeyDown);
+
+  };
 
   init = (targetContainer, filmCardModel) => {
     this.#container = targetContainer;
@@ -17,21 +43,19 @@ export default class FilmsPresenter {
 
     render(this.#filmsListSection, this.#container);
 
-    const filmsListItemsContainer = this.#container.querySelector('.films-list__container');
     for (let i = 0; i < this.#filmCards.length; i++) {
-      render(new FilmCardView(this.#filmCards[i]), filmsListItemsContainer);
+      this.#renderFilmCard(this.#filmCards[i]);
     }
 
-    const filmCards = filmsListItemsContainer.querySelectorAll('.film-card__link');
+    const filmCards = this.#container.querySelectorAll('.film-card__link');
     filmCards.forEach((filmCard, i) => {
       filmCard.addEventListener('click', () => {
-        const bodyElement = document.querySelector('body');
-        render(new FilmPopupView(this.#filmCards[i],), bodyElement);
-        const closeButton = document.querySelector('.film-details__close-btn');
-        closeButton.addEventListener('click', () => {
-          const popup = document.querySelector('.film-details');
-          popup.remove();
-        });
+        const existingPopup = document.querySelector('.film-details');
+        if (existingPopup) {
+          existingPopup.remove();
+        }
+
+        this.#renderFilmPopup(this.#filmCards[i]);
       });
     });
 
