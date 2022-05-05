@@ -10,7 +10,7 @@ const siteHeader = document.querySelector('.header');
 const siteMain = document.querySelector('.main');
 
 const filmCardModel = new FilmCardModel();
-const filmsPresenter = new FilmsPresenter();
+
 
 render(new UserRatingView(), siteHeader);
 
@@ -19,4 +19,6 @@ render(new FilterView(), siteMain);
 render(new FilmsSectionView(), siteMain);
 
 const filmContainer = document.querySelector('.films');
-filmsPresenter.init(filmContainer, filmCardModel);
+const filmsPresenter = new FilmsPresenter(filmContainer, filmCardModel);
+
+filmsPresenter.init();
