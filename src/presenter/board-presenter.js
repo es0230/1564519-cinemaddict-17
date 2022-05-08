@@ -3,7 +3,7 @@ import FilmPopupView from '../view/film-popup.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
 import FilmsListSectionView from '../view/films-list.js';
 import NoFilmCardsView from '../view/no-film-cards-view.js';
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
 

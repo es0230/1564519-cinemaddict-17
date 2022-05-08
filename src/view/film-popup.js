@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilmPopupTemplate = (filmCard) => {
   const {poster, title, originalTitle, rating, releaseYear, duration, genre, description, commentsCount} = filmCard;
@@ -115,27 +115,15 @@ const createFilmPopupTemplate = (filmCard) => {
           </section>`;
 };
 
-export default class FilmPopupView {
-  #element = null;
+export default class FilmPopupView extends AbstractView{
   #filmCard = null;
 
   constructor (filmCard) {
+    super();
     this.#filmCard = filmCard;
   }
 
   get template() {
     return createFilmPopupTemplate(this.#filmCard);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
