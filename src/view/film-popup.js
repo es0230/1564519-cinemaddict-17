@@ -126,4 +126,27 @@ export default class FilmPopupView extends AbstractView{
   get template() {
     return createFilmPopupTemplate(this.#filmCard);
   }
+
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
+
+  setEscKeyDownHandler = (callback) => {
+    this._callback.escKeyDown = callback;
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this._callback.escKeyDown();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
+  };
 }
