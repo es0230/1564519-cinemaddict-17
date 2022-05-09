@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilmPopupTemplate = (filmCard) => {
   const {poster, title, originalTitle, rating, releaseYear, duration, genre, description, commentsCount} = filmCard;
@@ -115,11 +115,11 @@ const createFilmPopupTemplate = (filmCard) => {
           </section>`;
 };
 
-export default class FilmPopupView {
-  #element = null;
+export default class FilmPopupView extends AbstractView{
   #filmCard = null;
 
   constructor (filmCard) {
+    super();
     this.#filmCard = filmCard;
   }
 
@@ -127,15 +127,26 @@ export default class FilmPopupView {
     return createFilmPopupTemplate(this.#filmCard);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
+
+  setEscKeyDownHandler = (callback) => {
+    this._callback.escKeyDown = callback;
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this._callback.escKeyDown();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  };
 }

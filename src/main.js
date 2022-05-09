@@ -4,7 +4,7 @@ import NavigationView from './view/navigation.js';
 import FilmsSectionView from './view/films-section.js';
 import FilmsPresenter from './presenter/board-presenter.js';
 import FilmCardModel from './model/film-card-model.js';
-import { render } from './render.js';
+import { render } from './framework/render.js';
 
 const siteHeader = document.querySelector('.header');
 const siteMain = document.querySelector('.main');
