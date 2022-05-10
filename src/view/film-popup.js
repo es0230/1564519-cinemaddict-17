@@ -1,7 +1,24 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+const ACTIVE_CONTROL_BUTTON_CLASS = 'film-details__control-button--active';
+
+const WATCHLIST_CONTROL_BUTTON_TEXT = {
+  INACTIVE: 'Add to watchlist',
+  ACTIVE: 'Already in watchlist'
+};
+
+const WATCHED_CONTROL_BUTTON_TEXT = {
+  INACTIVE: 'Add to watched',
+  ACTIVE: 'Already watched'
+};
+
+const FAVORITE_CONTROL_BUTTON_TEXT = {
+  INACTIVE: 'Add to favorites',
+  ACTIVE: 'Already favorite'
+};
+
 const createFilmPopupTemplate = (filmCard) => {
-  const {poster, title, originalTitle, rating, releaseYear, duration, genre, description, commentsCount} = filmCard;
+  const {poster, title, originalTitle, rating, director, screenwriter, actors, releaseYear, duration, genre, description, commentsCount, isInWatchList, isAlreadyWatched, isFavorite} = filmCard;
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
@@ -31,15 +48,15 @@ const createFilmPopupTemplate = (filmCard) => {
                     <table class="film-details__table">
                       <tr class="film-details__row">
                         <td class="film-details__term">Director</td>
-                        <td class="film-details__cell">Anthony Mann</td>
+                        <td class="film-details__cell">${director}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Writers</td>
-                        <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                        <td class="film-details__cell">${screenwriter}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Actors</td>
-                        <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                        <td class="film-details__cell">${actors[0]}, ${actors[1]}, ${actors[2]}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Release Date</td>
@@ -68,9 +85,9 @@ const createFilmPopupTemplate = (filmCard) => {
                 </div>
 
                 <section class="film-details__controls">
-                  <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-                  <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-                  <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+                  <button type="button" class="film-details__control-button film-details__control-button--watchlist ${isInWatchList ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watchlist" name="watchlist">${isInWatchList ? WATCHLIST_CONTROL_BUTTON_TEXT.ACTIVE : WATCHLIST_CONTROL_BUTTON_TEXT.INACTIVE}</button>
+                  <button type="button" class="film-details__control-button film-details__control-button--watched ${isAlreadyWatched ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watched" name="watched">${isAlreadyWatched ? WATCHED_CONTROL_BUTTON_TEXT.ACTIVE : WATCHED_CONTROL_BUTTON_TEXT.INACTIVE}</button>
+                  <button type="button" class="film-details__control-button film-details__control-button--favorite ${isFavorite ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="favorite" name="favorite">${isFavorite ? FAVORITE_CONTROL_BUTTON_TEXT.ACTIVE : FAVORITE_CONTROL_BUTTON_TEXT.INACTIVE}</button>
                 </section>
               </div>
 

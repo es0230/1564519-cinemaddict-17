@@ -26,6 +26,9 @@ export default class FilmsPresenter {
   };
 
   #renderFilmPopup = (filmCard) => {
+    if (this.#filmPopupComponent) {
+      this.#handlePopupClosing();
+    }
     this.#filmPopupComponent = new FilmPopupView(filmCard);
     this.#filmPopupComponent.setClickHandler(this.#handlePopupClosing);
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);

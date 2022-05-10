@@ -1,5 +1,5 @@
-import { getRandomInteger } from '../util.js';
-import { MOCKTEXT } from '../const.js';
+import { getRandomInteger, getRandomName } from '../util.js';
+import { MOCKTEXT, FIRST_NAMES, LAST_NAMES } from '../const.js';
 
 const filmPostersSrcs = [
   'made-for-each-other.png',
@@ -46,14 +46,17 @@ const generateFilm = () => {
     title: filmTitles[filmNumber],
     originalTitle: filmTitles[filmNumber],
     rating: `${getRandomInteger(1, 9)}.${getRandomInteger(1, 9)}`,
-    director: 'Director\'s name',
-    screenwriter: 'Screenwriter\'s name',
-    actors: ['Actor 1', 'Actor 2', 'Actor 3'],
+    director: getRandomName(FIRST_NAMES, LAST_NAMES),
+    screenwriter: Array.from({length: 2}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),  //  почему если в параметрах Array.from() length вычисляется
+    actors: Array.from({length: 4}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),        //  то некоторые элементы массива становятся undefined
     releaseYear: getRandomInteger(1930, 1960),
     duration: `${getRandomInteger(1, 2)}h ${getRandomInteger(0, 59)}m`,
     genre: filmGenres[filmNumber],
     description: generateFilmDescription(),
     commentsCount: `${getRandomInteger(0, 10)} comments`,
+    isInWatchList: Boolean(Math.round(getRandomInteger())),
+    isAlreadyWatched: Boolean(Math.round(getRandomInteger())),
+    isFavorite: Boolean(Math.round(getRandomInteger())),
   };
 };
 

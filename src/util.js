@@ -7,4 +7,6 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export {getRandomInteger};
+const getRandomName = (firstNamesArray, lastNamesArray) => `${firstNamesArray[getRandomInteger(0, firstNamesArray.length - 1)]} ${lastNamesArray[getRandomInteger(0, lastNamesArray.length - 1)]}`;
+
+export {getRandomInteger, getRandomName};
