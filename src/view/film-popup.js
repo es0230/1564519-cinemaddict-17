@@ -18,7 +18,7 @@ const FAVORITE_CONTROL_BUTTON_TEXT = {
 };
 
 const createFilmPopupTemplate = (filmCard) => {
-  const {poster, title, originalTitle, rating, director, screenwriter, actors, releaseYear, duration, genre, description, commentsCount, isInWatchList, isAlreadyWatched, isFavorite} = filmCard;
+  const {poster, title, originalTitle, rating, director, screenwriter, actors, releaseYear, duration, genre, description, commentsCount, isInWatchlist, isAlreadyWatched, isFavorite} = filmCard;
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
@@ -85,7 +85,7 @@ const createFilmPopupTemplate = (filmCard) => {
                 </div>
 
                 <section class="film-details__controls">
-                  <button type="button" class="film-details__control-button film-details__control-button--watchlist ${isInWatchList ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watchlist" name="watchlist">${isInWatchList ? WATCHLIST_CONTROL_BUTTON_TEXT.ACTIVE : WATCHLIST_CONTROL_BUTTON_TEXT.INACTIVE}</button>
+                  <button type="button" class="film-details__control-button film-details__control-button--watchlist ${isInWatchlist ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watchlist" name="watchlist">${isInWatchlist ? WATCHLIST_CONTROL_BUTTON_TEXT.ACTIVE : WATCHLIST_CONTROL_BUTTON_TEXT.INACTIVE}</button>
                   <button type="button" class="film-details__control-button film-details__control-button--watched ${isAlreadyWatched ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watched" name="watched">${isAlreadyWatched ? WATCHED_CONTROL_BUTTON_TEXT.ACTIVE : WATCHED_CONTROL_BUTTON_TEXT.INACTIVE}</button>
                   <button type="button" class="film-details__control-button film-details__control-button--favorite ${isFavorite ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="favorite" name="favorite">${isFavorite ? FAVORITE_CONTROL_BUTTON_TEXT.ACTIVE : FAVORITE_CONTROL_BUTTON_TEXT.INACTIVE}</button>
                 </section>

@@ -14,7 +14,7 @@ const filmCardModel = new FilmCardModel();
 
 render(new UserRatingView(), siteHeader);
 
-render(new NavigationView(), siteMain);
+render(new NavigationView(filmCardModel), siteMain);
 render(new FilterView(), siteMain);
 render(new FilmsSectionView(), siteMain);
 
