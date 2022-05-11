@@ -2,10 +2,10 @@ import AbstractView from '../framework/view/abstract-view.js';
 
 const createNavigationTemplate = (watchlist, history, favorites) => (
   `<nav class="main-navigation">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${watchlist.length}</span></a>
-    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">${history.length}</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">${favorites.length}</span></a>
+    <a href="#all" data-list-type="filmCards" class="main-navigation__item main-navigation__item--active">All movies</a>
+    <a href="#watchlist" data-list-type="watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${watchlist.length}</span></a>
+    <a href="#history" data-list-type="history" class="main-navigation__item">History <span class="main-navigation__item-count">${history.length}</span></a>
+    <a href="#favorites" data-list-type="favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">${favorites.length}</span></a>
   </nav>`
 );
 
@@ -50,10 +50,7 @@ export default class NavigationView extends AbstractView{
 
   #clickHandler = (evt) => {
     evt.preventDefault();
-    let targetList = evt.target.href.slice(23);
-    if (targetList === 'all') {
-      targetList = 'filmCards';
-    }
-    this._callback.click(targetList);
+    const listType = evt.target.dataset.listType;
+    this._callback.click(listType);
   };
 }
