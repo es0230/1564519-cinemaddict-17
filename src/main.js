@@ -1,6 +1,5 @@
 import FilterView from './view/filters.js';
 import UserRatingView from './view/user-rank.js';
-import NavigationView from './view/navigation.js';
 import FilmsSectionView from './view/films-section.js';
 import FilmsPresenter from './presenter/board-presenter.js';
 import FilmCardModel from './model/film-card-model.js';
@@ -14,11 +13,10 @@ const filmCardModel = new FilmCardModel();
 
 render(new UserRatingView(), siteHeader);
 
-render(new NavigationView(), siteMain);
 render(new FilterView(), siteMain);
-render(new FilmsSectionView(), siteMain);
 
-const filmContainer = document.querySelector('.films');
-const filmsPresenter = new FilmsPresenter(filmContainer, filmCardModel);
+const filmContainer = new FilmsSectionView();
+render(filmContainer, siteMain);
 
+const filmsPresenter = new FilmsPresenter(filmContainer.element, filmCardModel); // спросить могу ли я передавать в презентер не модель напрямую а кусок вьюхи в которой лежит эта модель
 filmsPresenter.init();

@@ -24,6 +24,6 @@ const LAST_NAMES = [
   'Heyward',
   'Horne',
   'Johnson'
-]
+];
 
 export {MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
