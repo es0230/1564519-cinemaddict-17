@@ -27,6 +27,10 @@ export default class NavigationView extends AbstractView{
     return createNavigationTemplate(this.#watchlist, this.#history, this.#favorites);
   }
 
+  get filmCards() {
+    return this.#filmCards;
+  }
+
   get watchlist() {
     return this.#watchlist;
   }
@@ -38,4 +42,18 @@ export default class NavigationView extends AbstractView{
   get favorites() {
     return this.#favorites;
   }
+
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelectorAll('.main-navigation__item').forEach((el) => el.addEventListener('click', this.#clickHandler));
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    let targetList = evt.target.href.slice(23);
+    if (targetList === 'all') {
+      targetList = 'filmCards';
+    }
+    this._callback.click(targetList);
+  };
 }
