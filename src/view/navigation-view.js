@@ -45,7 +45,7 @@ export default class NavigationView extends AbstractView{
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
-    this.element.querySelectorAll('.main-navigation__item').forEach((el) => el.addEventListener('click', this.#clickHandler));
+    this.element.addEventListener('click', this.#clickHandler);
   };
 
   #clickHandler = (evt) => {
