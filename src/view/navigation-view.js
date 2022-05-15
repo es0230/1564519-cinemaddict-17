@@ -18,9 +18,9 @@ export default class NavigationView extends AbstractView{
   constructor (filmCardModel) {
     super();
     this.#filmCards = filmCardModel.filmCards;
-    this.#watchlist = this.#filmCards.filter((el) => el.isInWatchlist);
-    this.#history = this.#filmCards.filter((el) => el.isAlreadyWatched);
-    this.#favorites = this.#filmCards.filter((el) => el.isFavorite);
+    this.#watchlist = this.#filmCards.filter((el) => el.watchlist);
+    this.#history = this.#filmCards.filter((el) => el.watched);
+    this.#favorites = this.#filmCards.filter((el) => el.favorite);
   }
 
   get template() {
@@ -45,12 +45,14 @@ export default class NavigationView extends AbstractView{
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
-    this.element.querySelectorAll('.main-navigation__item').forEach((el) => el.addEventListener('click', this.#clickHandler));
+    this.element.addEventListener('click', this.#clickHandler);
   };
 
   #clickHandler = (evt) => {
-    evt.preventDefault();
-    const listType = evt.target.dataset.listType;
-    this._callback.click(listType);
+    if (evt.target.dataset.listType) {
+      evt.preventDefault();
+      const listType = evt.target.dataset.listType;
+      this._callback.click(listType);
+    }
   };
 }
