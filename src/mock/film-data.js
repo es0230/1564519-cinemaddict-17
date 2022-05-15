@@ -54,9 +54,9 @@ const generateFilm = () => {
     genre: filmGenres[filmNumber],
     description: generateFilmDescription(),
     commentsCount: `${getRandomInteger(0, 10)} comments`,
-    isInWatchlist: Boolean(Math.round(getRandomInteger())),
-    isAlreadyWatched: Boolean(Math.round(getRandomInteger())),
-    isFavorite: Boolean(Math.round(getRandomInteger())),
+    watchlist: Boolean(Math.round(getRandomInteger())),
+    watched: Boolean(Math.round(getRandomInteger())),
+    favorite: Boolean(Math.round(getRandomInteger())),
   };
 };
 

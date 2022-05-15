@@ -25,5 +25,7 @@ const LAST_NAMES = [
   'Horne',
   'Johnson'
 ];
+const ACTIVE_CONTROL_ITEM_CLASS = 'film-card__controls-item--active';
+const ACTIVE_CONTROL_BUTTON_CLASS = 'film-details__control-button--active';
 
-export {MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
+export {ACTIVE_CONTROL_ITEM_CLASS, ACTIVE_CONTROL_BUTTON_CLASS, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};

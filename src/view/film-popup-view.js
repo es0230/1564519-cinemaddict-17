@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-
-const ACTIVE_CONTROL_BUTTON_CLASS = 'film-details__control-button--active';
+import { ACTIVE_CONTROL_BUTTON_CLASS } from '../const.js';
 
 const WATCHLIST_CONTROL_BUTTON_TEXT = {
   INACTIVE: 'Add to watchlist',
@@ -18,7 +17,7 @@ const FAVORITE_CONTROL_BUTTON_TEXT = {
 };
 
 const createFilmPopupTemplate = (filmCard) => {
-  const {poster, title, originalTitle, rating, director, screenwriter, actors, releaseYear, duration, genre, description, commentsCount, isInWatchlist, isAlreadyWatched, isFavorite} = filmCard;
+  const {poster, title, originalTitle, rating, director, screenwriter, actors, releaseYear, duration, genre, description, commentsCount, watchlist, watched, favorite} = filmCard;
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
@@ -85,9 +84,9 @@ const createFilmPopupTemplate = (filmCard) => {
                 </div>
 
                 <section class="film-details__controls">
-                  <button type="button" class="film-details__control-button film-details__control-button--watchlist ${isInWatchlist ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watchlist" name="watchlist">${isInWatchlist ? WATCHLIST_CONTROL_BUTTON_TEXT.ACTIVE : WATCHLIST_CONTROL_BUTTON_TEXT.INACTIVE}</button>
-                  <button type="button" class="film-details__control-button film-details__control-button--watched ${isAlreadyWatched ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watched" name="watched">${isAlreadyWatched ? WATCHED_CONTROL_BUTTON_TEXT.ACTIVE : WATCHED_CONTROL_BUTTON_TEXT.INACTIVE}</button>
-                  <button type="button" class="film-details__control-button film-details__control-button--favorite ${isFavorite ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="favorite" name="favorite">${isFavorite ? FAVORITE_CONTROL_BUTTON_TEXT.ACTIVE : FAVORITE_CONTROL_BUTTON_TEXT.INACTIVE}</button>
+                  <button type="button" data-control-type="watchlist" class="film-details__control-button film-details__control-button--watchlist ${watchlist ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watchlist" name="watchlist">${watchlist ? WATCHLIST_CONTROL_BUTTON_TEXT.ACTIVE : WATCHLIST_CONTROL_BUTTON_TEXT.INACTIVE}</button>
+                  <button type="button" data-control-type="watched" class="film-details__control-button film-details__control-button--watched ${watched ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="watched" name="watched">${watched ? WATCHED_CONTROL_BUTTON_TEXT.ACTIVE : WATCHED_CONTROL_BUTTON_TEXT.INACTIVE}</button>
+                  <button type="button" data-control-type="favorite" class="film-details__control-button film-details__control-button--favorite ${favorite ? ACTIVE_CONTROL_BUTTON_CLASS : ''}" id="favorite" name="favorite">${favorite ? FAVORITE_CONTROL_BUTTON_TEXT.ACTIVE : FAVORITE_CONTROL_BUTTON_TEXT.INACTIVE}</button>
                 </section>
               </div>
 
@@ -144,14 +143,14 @@ export default class FilmPopupView extends AbstractView{
     return createFilmPopupTemplate(this.#filmCard);
   }
 
-  setClickHandler = (callback) => {
-    this._callback.click = callback;
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+  setCloseClickHandler = (callback) => {
+    this._callback.closeClick = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
   };
 
-  #clickHandler = (evt) => {
+  #closeClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.closeClick();
   };
 
   setEscKeyDownHandler = (callback) => {
@@ -164,6 +163,19 @@ export default class FilmPopupView extends AbstractView{
       evt.preventDefault();
       this._callback.escKeyDown();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
+  };
+
+  setControlButtonClickHandler = (callback) => {
+    this._callback.controlButtonClick = callback;
+    this.element.querySelector('.film-details__controls').addEventListener('click', this.#controlButtonClickHandler);
+  };
+
+  #controlButtonClickHandler = (evt) => {
+    if (evt.target.dataset.controlType) {
+      evt.preventDefault();
+      const controlType = evt.target.dataset.controlType;
+      this._callback.controlButtonClick(controlType);
     }
   };
 }

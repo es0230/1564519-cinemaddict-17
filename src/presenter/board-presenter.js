@@ -59,8 +59,11 @@ export default class FilmsPresenter {
     const mainElement = document.querySelector('.main');
     this.#navigationBlock = new NavigationView(this.#cardModel);
     render(this.#navigationBlock, mainElement, 'afterbegin');
-    this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
+    //this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
   }; //
+
+  #updateNavigationBlock = () => {
+  };
 
   #removeFilmCards = () => {
     this.#renderedFilmCardsCount = 0;
@@ -73,6 +76,10 @@ export default class FilmsPresenter {
     } else {
       render(this.#filmsListSection, this.#container);
     }
+  };
+
+  #handleCardControlChange = () => {
+
   };
 
   constructor(targetContainer, filmCardModel) {
