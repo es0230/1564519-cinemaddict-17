@@ -1,5 +1,6 @@
 import { getRandomInteger, getRandomName } from '../util.js';
 import { MOCKTEXT, FIRST_NAMES, LAST_NAMES } from '../const.js';
+import { nanoid } from 'nanoid';
 
 const filmPostersSrcs = [
   'made-for-each-other.png',
@@ -42,6 +43,7 @@ const generateFilmDescription = () => {
 const generateFilm = () => {
   const filmNumber = getRandomInteger(0, filmPostersSrcs.length - 1);
   return {
+    id: nanoid(),
     poster: `./images/posters/${filmPostersSrcs[filmNumber]}`,
     title: filmTitles[filmNumber],
     originalTitle: filmTitles[filmNumber],

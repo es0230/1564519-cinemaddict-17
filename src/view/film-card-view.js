@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { ACTIVE_CONTROL_ITEM_CLASS } from '../const.js';
+const ACTIVE_CONTROL_ITEM_CLASS = 'film-card__controls-item--active';
 
 const createFilmCardTemplate = (filmCard) => {
   const {poster, title, rating, releaseYear, duration, genre, description, commentsCount, watchlist, watched, favorite} = filmCard;

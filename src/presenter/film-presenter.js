@@ -1,76 +1,89 @@
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
-import { render } from '../framework/render.js';
-import { ACTIVE_CONTROL_ITEM_CLASS, ACTIVE_CONTROL_BUTTON_CLASS } from '../const.js';
+import { render, remove, replace } from '../framework/render.js';
 
 export default class FilmCardPresenter {
   #container = null;
+  #changeData = null;
+  #removePopups = null;
+
   #filmCardComponent = null;
   #filmPopupComponent = null;
-  #filmCard = null;
-  #watchlist = null;
-  #watched = null;
-  #favorite = null;
 
-  constructor (container) {
+  #filmCard = null;
+
+  #popupOpened = false;
+
+  constructor (container, changeData, removePopups) {
     this.#container = container;
+    this.#changeData = changeData;
+    this.#removePopups = removePopups;
   }
 
   init = (filmCard) => {
-    if (filmCard) {
-      this.#filmCard = filmCard;
-      this.#watchlist = filmCard.watchlist;
-      this.#watched = filmCard.watched;
-      this.#favorite = filmCard.favorite;
-      this.#filmCardComponent = new FilmCardView(filmCard);
-      this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
-      this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
-      render(this.#filmCardComponent, this.#container.querySelector('.films-list__container'));
+    this.#filmCard = filmCard;
+
+    const prevFilmCardComponent = this.#filmCardComponent;
+    const prevFilmPopupComponent = this.#filmPopupComponent;
+
+    this.#filmCardComponent = new FilmCardView(filmCard);
+    this.#filmPopupComponent = new FilmPopupView(filmCard);
+
+    this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
+    this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
+
+    this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
+    this.#filmPopupComponent.setControlButtonClickHandler(this.#handleControlClick);
+
+    if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
+      render(this.#filmCardComponent, this.#container);
+      return;
     }
+
+    if (this.#container.contains(prevFilmCardComponent.element)) {
+      replace(this.#filmCardComponent, prevFilmCardComponent);
+    }
+
+    if (document.querySelector('body').contains(prevFilmPopupComponent.element)) {
+      replace(this.#filmPopupComponent, prevFilmPopupComponent);
+    }
+
+    remove(prevFilmCardComponent);
+    remove(prevFilmPopupComponent);
   };
 
-  #handleFilmCardClick = (cardData) => () => this.#renderFilmPopup(cardData);
+  #handleFilmCardClick = (cardData) => () => {
+    this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
+    this.#renderFilmPopup(cardData);
+  };
 
   #handleControlClick = (controlType) => {
-    this.#filmCard[controlType] = !this.#filmCard[controlType];
-    this.#filmCardComponent.element.querySelector(`button[data-control-type="${controlType}"]`).classList.toggle(ACTIVE_CONTROL_ITEM_CLASS);
-    this.#filmPopupComponent.element.querySelector(`button[data-control-type="${controlType}"]`).classList.toggle(ACTIVE_CONTROL_BUTTON_CLASS);
+    this.#changeData({...this.#filmCard, [controlType]: !this.#filmCard[controlType]});
   };
 
-  #renderFilmPopup = (filmCard) => {
-    if (this.#filmPopupComponent) {
-      this.#handlePopupClosing();
-    }
-    this.#filmPopupComponent = new FilmPopupView(filmCard);
-    this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
-    this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
-    this.#filmPopupComponent.setControlButtonClickHandler(this.#handleControlClick);
+  #renderFilmPopup = () => {
+    this.#removePopups();
     render(this.#filmPopupComponent, document.querySelector('body'));
+    this.#popupOpened = !this.#popupOpened;
   };
 
-  #handlePopupClosing = () => this.#filmPopupComponent.element.remove();
+  #handlePopupClosing = () => {
+    this.#filmPopupComponent.element.remove();
+    this.#popupOpened = !this.#popupOpened;
+  };
 
-  get watchlist() {
-    return this.#watchlist;
-  }
+  removePopup = () => {
+    this.#handlePopupClosing();
+  };
 
-  set watchlist(newValue) {
-    this.#watchlist = newValue;
-  }
+  destroy = () => {
+    remove(this.#filmCardComponent);
+    if (this.#filmPopupComponent) {
+      remove(this.#filmPopupComponent);
+    }
+  };
 
-  get watched() {
-    return this.#watched;
-  }
-
-  set watched(newValue) {
-    this.#watched = newValue;
-  }
-
-  get favorite() {
-    return this.#favorite;
-  }
-
-  set favorite(newValue) {
-    this.#favorite = newValue;
+  get popupOpened() {
+    return this.#popupOpened;
   }
 }

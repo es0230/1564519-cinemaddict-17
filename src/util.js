@@ -9,4 +9,18 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const getRandomName = (firstNamesArray, lastNamesArray) => `${firstNamesArray[getRandomInteger(0, firstNamesArray.length - 1)]} ${lastNamesArray[getRandomInteger(0, lastNamesArray.length - 1)]}`;
 
-export {getRandomInteger, getRandomName};
+const updateFilmCard = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
+};
+
+export {getRandomInteger, getRandomName, updateFilmCard};

@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { ACTIVE_CONTROL_BUTTON_CLASS } from '../const.js';
+
+const ACTIVE_CONTROL_BUTTON_CLASS = 'film-details__control-button--active';
 
 const WATCHLIST_CONTROL_BUTTON_TEXT = {
   INACTIVE: 'Add to watchlist',
@@ -151,6 +152,7 @@ export default class FilmPopupView extends AbstractView{
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeClick();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   setEscKeyDownHandler = (callback) => {

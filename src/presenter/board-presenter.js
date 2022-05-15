@@ -3,33 +3,53 @@ import FilmsListSectionView from '../view/films-list-view.js';
 import NoFilmCardsView from '../view/no-film-cards-view.js';
 import NavigationView from '../view/navigation-view.js';
 import FilmCardPresenter from './film-presenter.js';
+import {updateFilmCard} from '../util.js';
 //import NavigationPresenter from './navigation-presenter.js';
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
 
 export default class FilmsPresenter {
+  #container = null;
+  #cardModel = null;
+
   #filmsListSection = new FilmsListSectionView();
   #showMoreButton = new ShowMoreButtonView();
   #noFilmCardsSection = new NoFilmCardsView();
   #navigationBlock = null;
-  #container = null;
-  #cardModel = null;
-  #filmCards = null;
+
+
+  #filmCards = [];
   #filmCardsToRender = null;
   #renderedFilmCardsCount = 0;
+  #filmBoardPresenter = new Map();
+
+  constructor(targetContainer, filmCardModel) {
+    this.#container = targetContainer;
+    this.#cardModel = filmCardModel;
+  }
+
+  init = () => {
+    this.#filmCards = [...this.#cardModel.filmCards];
+    this.#filmCardsToRender = this.#filmCards;
+    this.#renderBoard();
+    this.#renderFilmCards(this.#filmCardsToRender);
+    this.#renderNavigationBlock();
+  };
 
   #renderFilmCard = (filmCard) => {
-    const filmCardPresenter = new FilmCardPresenter(this.#filmsListSection.element);
+    const filmCardPresenter = new FilmCardPresenter(this.#filmsListSection.element.querySelector('.films-list__container'), this.#handleFilmCardChange, this.#removePopups);
     filmCardPresenter.init(filmCard);
+    this.#filmBoardPresenter.set(filmCard.id, filmCardPresenter);
   };
 
   #renderFilmCards = (filmCardsToRender) => {
-    for (let i = this.#renderedFilmCardsCount; i < this.#renderedFilmCardsCount + FILM_CARDS_COUNT_PER_STEP; i++) {
+    const cardsCountLimit = Math.min(this.#renderedFilmCardsCount + FILM_CARDS_COUNT_PER_STEP, filmCardsToRender.length);
+    for (let i = this.#renderedFilmCardsCount; i < cardsCountLimit; i++) {
       this.#renderFilmCard(filmCardsToRender[i]);
     }
     this.#actualizeShowMoreButton();
-    this.#renderedFilmCardsCount = Math.min(this.#renderedFilmCardsCount + FILM_CARDS_COUNT_PER_STEP, filmCardsToRender.length);
+    this.#renderedFilmCardsCount = cardsCountLimit;
   };
 
   #actualizeShowMoreButton = () => {
@@ -39,13 +59,18 @@ export default class FilmsPresenter {
       render(this.#showMoreButton, this.#filmsListSection.element);
       this.#showMoreButton.setClickHandler(this.#handleShowMoreButtonClick);
     }
-  }; //хз может лучше по-другому назвать но ничего лучше не придумалось
+  };
 
   #handleNavigationLinkClick = (category) => {
     this.#filmCardsToRender = this.#navigationBlock[category];
     this.#removeFilmCards();
     this.#renderFilmCards(this.#filmCardsToRender);
     this.#actualizeShowMoreButton();
+  };
+
+  #handleFilmCardChange = (updatedFilmCard) => {
+    this.#filmCards = updateFilmCard(this.#filmCards, updatedFilmCard);
+    this.#filmBoardPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
   };
 
   #handleShowMoreButtonClick = () => {
@@ -59,15 +84,22 @@ export default class FilmsPresenter {
     const mainElement = document.querySelector('.main');
     this.#navigationBlock = new NavigationView(this.#cardModel);
     render(this.#navigationBlock, mainElement, 'afterbegin');
-    //this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
+    this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
   }; //
 
-  #updateNavigationBlock = () => {
+  #removeFilmCards = () => {
+    this.#filmBoardPresenter.forEach((presenter) => presenter.destroy());
+    this.#filmBoardPresenter.clear();
+    this.#renderedFilmCardsCount = 0;
+    remove(this.#showMoreButton);
   };
 
-  #removeFilmCards = () => {
-    this.#renderedFilmCardsCount = 0;
-    this.#filmsListSection.element.querySelectorAll('.film-card').forEach((el) => el.remove());
+  #removePopups = () => {
+    this.#filmBoardPresenter.forEach((presenter) => {
+      if (presenter.popupOpened) {
+        presenter.removePopup();
+      }
+    });
   };
 
   #renderBoard = () => {
@@ -76,22 +108,5 @@ export default class FilmsPresenter {
     } else {
       render(this.#filmsListSection, this.#container);
     }
-  };
-
-  #handleCardControlChange = () => {
-
-  };
-
-  constructor(targetContainer, filmCardModel) {
-    this.#container = targetContainer;
-    this.#cardModel = filmCardModel;
-  }
-
-  init = () => {
-    this.#filmCards = [...this.#cardModel.filmCards];
-    this.#filmCardsToRender = this.#filmCards;
-    this.#renderBoard();
-    this.#renderFilmCards(this.#filmCardsToRender);
-    this.#renderNavigationBlock();
   };
 }
