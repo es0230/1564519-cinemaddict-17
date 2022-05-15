@@ -49,8 +49,10 @@ export default class NavigationView extends AbstractView{
   };
 
   #clickHandler = (evt) => {
-    evt.preventDefault();
-    const listType = evt.target.dataset.listType;
-    this._callback.click(listType);
+    if (evt.target.dataset.listType) {
+      evt.preventDefault();
+      const listType = evt.target.dataset.listType;
+      this._callback.click(listType);
+    }
   };
 }

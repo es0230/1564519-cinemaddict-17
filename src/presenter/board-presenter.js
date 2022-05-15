@@ -1,9 +1,9 @@
-import FilmCardView from '../view/film-card-view.js';
-import FilmPopupView from '../view/film-popup-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import FilmsListSectionView from '../view/films-list-view.js';
 import NoFilmCardsView from '../view/no-film-cards-view.js';
 import NavigationView from '../view/navigation-view.js';
+import FilmCardPresenter from './film-presenter.js';
+//import NavigationPresenter from './navigation-presenter.js';
 import { render } from '../framework/render.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
@@ -13,7 +13,6 @@ export default class FilmsPresenter {
   #showMoreButton = new ShowMoreButtonView();
   #noFilmCardsSection = new NoFilmCardsView();
   #navigationBlock = null;
-  #filmPopupComponent = null;
   #container = null;
   #cardModel = null;
   #filmCards = null;
@@ -21,62 +20,51 @@ export default class FilmsPresenter {
   #renderedFilmCardsCount = 0;
 
   #renderFilmCard = (filmCard) => {
-    if (filmCard) {
-      const filmCardComponent = new FilmCardView(filmCard);
-      filmCardComponent.setClickHandler(this.#handleFilmCardClick(filmCardComponent.filmCard));
-      render(filmCardComponent, this.#container.querySelector('.films-list__container'));
-    }
+    const filmCardPresenter = new FilmCardPresenter(this.#filmsListSection.element);
+    filmCardPresenter.init(filmCard);
   };
 
-  #renderFilmPopup = (filmCard) => {
-    if (this.#filmPopupComponent) {
-      this.#handlePopupClosing();
-    }
-    this.#filmPopupComponent = new FilmPopupView(filmCard);
-    this.#filmPopupComponent.setClickHandler(this.#handlePopupClosing);
-    this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
-    render(this.#filmPopupComponent, document.querySelector('body'));
-  };
-
-  #renderNewFilmCards = () => {
+  #renderFilmCards = (filmCardsToRender) => {
     for (let i = this.#renderedFilmCardsCount; i < this.#renderedFilmCardsCount + FILM_CARDS_COUNT_PER_STEP; i++) {
-      this.#renderFilmCard(this.#filmCardsToRender[i]);
+      this.#renderFilmCard(filmCardsToRender[i]);
     }
     this.#actualizeShowMoreButton();
-    this.#renderedFilmCardsCount = Math.min(this.#renderedFilmCardsCount + FILM_CARDS_COUNT_PER_STEP, this.#filmCardsToRender.length);
+    this.#renderedFilmCardsCount = Math.min(this.#renderedFilmCardsCount + FILM_CARDS_COUNT_PER_STEP, filmCardsToRender.length);
   };
 
-  #actualizeShowMoreButton = () => { //хз может лучше по-другому назвать но ничего лучше не придумалось
+  #actualizeShowMoreButton = () => {
     if (this.#filmCardsToRender.length === this.#renderedFilmCardsCount) {
       this.#showMoreButton.element.remove();
     } else {
       render(this.#showMoreButton, this.#filmsListSection.element);
       this.#showMoreButton.setClickHandler(this.#handleShowMoreButtonClick);
     }
-  };
+  }; //хз может лучше по-другому назвать но ничего лучше не придумалось
 
   #handleNavigationLinkClick = (category) => {
     this.#filmCardsToRender = this.#navigationBlock[category];
-    this.#renderedFilmCardsCount = 0;
-    this.#filmsListSection.element.querySelectorAll('.film-card').forEach((el) => el.remove());
-    this.#renderNewFilmCards();
+    this.#removeFilmCards();
+    this.#renderFilmCards(this.#filmCardsToRender);
     this.#actualizeShowMoreButton();
   };
-
-  #handleFilmCardClick = (cardData) => () => this.#renderFilmPopup(cardData);
 
   #handleShowMoreButtonClick = () => {
-    this.#renderNewFilmCards();
+    this.#renderFilmCards(this.#filmCardsToRender);
     this.#actualizeShowMoreButton();
   };
 
-  #handlePopupClosing = () => this.#filmPopupComponent.element.remove();
-
   #renderNavigationBlock = () => {
+    //const navigationPresenter = new NavigationPresenter(this.#cardModel, this.#filmCardsToRender, this.#removeFilmCards, this.#renderFilmCards, this.#actualizeShowMoreButton);
+    //navigationPresenter.init();
     const mainElement = document.querySelector('.main');
     this.#navigationBlock = new NavigationView(this.#cardModel);
     render(this.#navigationBlock, mainElement, 'afterbegin');
     this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
+  }; //
+
+  #removeFilmCards = () => {
+    this.#renderedFilmCardsCount = 0;
+    this.#filmsListSection.element.querySelectorAll('.film-card').forEach((el) => el.remove());
   };
 
   #renderBoard = () => {
@@ -96,7 +84,7 @@ export default class FilmsPresenter {
     this.#filmCards = [...this.#cardModel.filmCards];
     this.#filmCardsToRender = this.#filmCards;
     this.#renderBoard();
-    this.#renderNewFilmCards();
+    this.#renderFilmCards(this.#filmCardsToRender);
     this.#renderNavigationBlock();
   };
 }
