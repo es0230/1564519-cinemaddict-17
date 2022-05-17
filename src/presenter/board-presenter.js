@@ -2,6 +2,7 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import FilmsListSectionView from '../view/films-list-view.js';
 import NoFilmCardsView from '../view/no-film-cards-view.js';
 import NavigationView from '../view/navigation-view.js';
+import SortView from '../view/sort-view.js';
 import FilmCardPresenter from './film-presenter.js';
 import {updateFilmCard} from '../util.js';
 //import NavigationPresenter from './navigation-presenter.js';
@@ -17,6 +18,7 @@ export default class FilmsPresenter {
   #showMoreButton = new ShowMoreButtonView();
   #noFilmCardsSection = new NoFilmCardsView();
   #navigationBlock = null;
+  #sortSection = null;
 
 
   #filmCards = [];
@@ -32,6 +34,7 @@ export default class FilmsPresenter {
   init = () => {
     this.#filmCards = [...this.#cardModel.filmCards];
     this.#filmCardsToRender = this.#filmCards;
+    this.#renderSortElement(this.#filmCards);
     this.#renderBoard();
     this.#renderFilmCards(this.#filmCardsToRender);
     this.#renderNavigationBlock();
@@ -61,12 +64,6 @@ export default class FilmsPresenter {
     }
   };
 
-  #handleNavigationLinkClick = (category) => {
-    this.#filmCardsToRender = this.#navigationBlock[category];
-    this.#removeFilmCards();
-    this.#renderFilmCards(this.#filmCardsToRender);
-    this.#actualizeShowMoreButton();
-  };
 
   #handleFilmCardChange = (updatedFilmCard) => {
     this.#filmCards = updateFilmCard(this.#filmCards, updatedFilmCard);
@@ -86,6 +83,13 @@ export default class FilmsPresenter {
     render(this.#navigationBlock, mainElement, 'afterbegin');
     this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
   }; //
+
+  #handleNavigationLinkClick = (category) => {
+    this.#filmCardsToRender = this.#navigationBlock[category];
+    this.#removeFilmCards();
+    this.#renderFilmCards(this.#filmCardsToRender);
+    this.#actualizeShowMoreButton();
+  };
 
   #removeFilmCards = () => {
     this.#filmBoardPresenter.forEach((presenter) => presenter.destroy());
@@ -108,5 +112,17 @@ export default class FilmsPresenter {
     } else {
       render(this.#filmsListSection, this.#container);
     }
+  };
+
+  #renderSortElement = (cardModel) => {
+    this.#sortSection = new SortView(cardModel);
+    render(this.#sortSection, document.querySelector('.main'), 'afterbegin');
+    this.#sortSection.setClickHandler(this.#handleSortClick);
+  };
+
+  #handleSortClick = (sortType) => {
+    this.#filmCardsToRender = this.#sortSection[`${sortType}FilmCardOrder`];
+    this.#removeFilmCards();
+    this.#renderFilmCards(this.#filmCardsToRender);
   };
 }

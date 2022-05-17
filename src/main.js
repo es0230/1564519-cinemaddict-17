@@ -1,4 +1,4 @@
-import FilterView from './view/filters-view.js';
+
 import UserRatingView from './view/user-rank-view.js';
 import FilmsSectionView from './view/films-section-view.js';
 import FilmsPresenter from './presenter/board-presenter.js';
@@ -12,8 +12,6 @@ const filmCardModel = new FilmCardModel();
 
 
 render(new UserRatingView(), siteHeader);
-
-render(new FilterView(), siteMain);
 
 const filmContainer = new FilmsSectionView();
 render(filmContainer, siteMain);
