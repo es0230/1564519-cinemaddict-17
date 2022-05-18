@@ -6,9 +6,11 @@ import SortView from '../view/sort-view.js';
 import FilmCardPresenter from './film-presenter.js';
 import {updateFilmCard} from '../util.js';
 //import NavigationPresenter from './navigation-presenter.js';
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
+import { SortType } from '../const.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
+const DEFAULT_SORT_TYPE = 'default';
 
 export default class FilmsPresenter {
   #container = null;
@@ -19,6 +21,7 @@ export default class FilmsPresenter {
   #noFilmCardsSection = new NoFilmCardsView();
   #navigationBlock = null;
   #sortSection = null;
+  #currentSortType = DEFAULT_SORT_TYPE;
 
 
   #filmCards = [];
@@ -33,7 +36,7 @@ export default class FilmsPresenter {
 
   init = () => {
     this.#filmCards = [...this.#cardModel.filmCards];
-    this.#filmCardsToRender = this.#filmCards;
+    this.#filmCardsToRender = this.#filmCards.slice();
     this.#renderSortElement(this.#filmCards);
     this.#renderBoard();
     this.#renderFilmCards(this.#filmCardsToRender);
@@ -80,8 +83,8 @@ export default class FilmsPresenter {
     //navigationPresenter.init();
     const mainElement = document.querySelector('.main');
     this.#navigationBlock = new NavigationView(this.#cardModel);
-    render(this.#navigationBlock, mainElement, 'afterbegin');
-    this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
+    render(this.#navigationBlock, mainElement, RenderPosition.AFTERBEGIN);
+    //this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
   }; //
 
   #handleNavigationLinkClick = (category) => {
@@ -116,13 +119,26 @@ export default class FilmsPresenter {
 
   #renderSortElement = (cardModel) => {
     this.#sortSection = new SortView(cardModel);
-    render(this.#sortSection, document.querySelector('.main'), 'afterbegin');
+    render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
     this.#sortSection.setClickHandler(this.#handleSortClick);
   };
 
   #handleSortClick = (sortType) => {
-    this.#filmCardsToRender = this.#sortSection[`${sortType}FilmCardOrder`];
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    switch (sortType) {
+      case SortType.DEFAULT:
+        this.#filmCardsToRender = this.#filmCards.slice();
+        break;
+      case SortType.DATE:
+      case SortType.RATING:
+        this.#filmCardsToRender.sort((a, b) => b[sortType] - a[sortType]);
+        break;
+    }
     this.#removeFilmCards();
     this.#renderFilmCards(this.#filmCardsToRender);
+    this.#actualizeShowMoreButton();
+    this.#currentSortType = sortType;
   };
 }

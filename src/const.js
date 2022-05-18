@@ -25,6 +25,11 @@ const LAST_NAMES = [
   'Horne',
   'Johnson'
 ];
+const SortType = {
+  DEFAULT: 'default',
+  DATE: 'releaseYear',
+  RATING: 'rating',
+}
 
 
-export { MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
+export { SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
