@@ -32,7 +32,7 @@ export default class FilmCardPresenter {
     this.#filmPopupComponent = new FilmPopupView(filmCard);
 
     this.#filmCommentComponents = Array.from({length: filmCard.comments.length}, (el, i) => new FilmCommentView(filmCard.comments[i]));
-    this.#filmCommentComponents.forEach((commentView) => render(commentView, this.#filmPopupComponent.element.querySelector('.film-details__comments-wrap')));
+    this.#filmCommentComponents.forEach(this.#renderFilmComment);
 
     this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
     this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
@@ -55,6 +55,15 @@ export default class FilmCardPresenter {
 
     remove(prevFilmCardComponent);
     remove(prevFilmPopupComponent);
+  };
+
+  #renderFilmComment = (commentView) => {
+    commentView.setDeleteClickHandler(this.#handleDeleteCommentClick);
+    render(commentView, this.#filmPopupComponent.element.querySelector('.film-details__comments-list'));
+  };
+
+  #handleDeleteCommentClick = (comment) => {
+    comment.remove();
   };
 
   #handleFilmCardClick = (cardData) => () => {
