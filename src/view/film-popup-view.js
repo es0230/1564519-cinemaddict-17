@@ -18,7 +18,7 @@ const FAVORITE_CONTROL_BUTTON_TEXT = {
 };
 
 const createFilmPopupTemplate = (filmCard) => {
-  const {poster, title, originalTitle, rating, director, screenwriter, actors, releaseYear, duration, genre, description, commentsCount, watchlist, watched, favorite} = filmCard;
+  const {poster, title, originalTitle, rating, director, screenwriter, actors, releaseYear, duration, genre, description, comments, watchlist, watched, favorite} = filmCard;
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
@@ -93,7 +93,7 @@ const createFilmPopupTemplate = (filmCard) => {
 
               <div class="film-details__bottom-container">
                 <section class="film-details__comments-wrap">
-                  <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount.split(' ')[0]}</span></h3>
+                  <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
                   <ul class="film-details__comments-list"></ul>
 

@@ -1,6 +1,7 @@
 import { getRandomInteger, getRandomName } from '../util.js';
 import { MOCKTEXT, FIRST_NAMES, LAST_NAMES } from '../const.js';
 import { nanoid } from 'nanoid';
+import { generateComment } from './film-comments.js';
 
 const filmPostersSrcs = [
   'made-for-each-other.png',
@@ -55,7 +56,7 @@ const generateFilm = () => {
     duration: `${getRandomInteger(1, 2)}h ${getRandomInteger(0, 59)}m`,
     genre: filmGenres[filmNumber],
     description: generateFilmDescription(),
-    commentsCount: `${getRandomInteger(0, 10)} comments`,
+    comments: Array.from({length: getRandomInteger(0, 9)}, generateComment),
     watchlist: Boolean(Math.round(getRandomInteger())),
     watched: Boolean(Math.round(getRandomInteger())),
     favorite: Boolean(Math.round(getRandomInteger())),

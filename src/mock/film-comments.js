@@ -9,7 +9,7 @@ const generateComment = () => ({
   text: generateCommentText(),
   emotion: COMMENT_EMOTIONS[getRandomInteger(0, COMMENT_EMOTIONS.length - 1)],
   author: generateCommentAuthor(),
-  date: `2022/03/20 ${generateCommentTime()}`,
+  date: `2022/0${getRandomInteger(3, 5)}/${getRandomInteger(1, 30)} ${generateCommentTime()}`,
 });
 
 export {generateComment};

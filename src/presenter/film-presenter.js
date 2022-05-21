@@ -1,5 +1,6 @@
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
+import FilmCommentView from '../view/film-popup-comment-view.js';
 import { render, remove, replace } from '../framework/render.js';
 
 export default class FilmCardPresenter {
@@ -9,6 +10,7 @@ export default class FilmCardPresenter {
 
   #filmCardComponent = null;
   #filmPopupComponent = null;
+  #filmCommentComponents = null;
 
   #filmCard = null;
 
@@ -28,6 +30,9 @@ export default class FilmCardPresenter {
 
     this.#filmCardComponent = new FilmCardView(filmCard);
     this.#filmPopupComponent = new FilmPopupView(filmCard);
+
+    this.#filmCommentComponents = Array.from({length: filmCard.comments.length}, (el, i) => new FilmCommentView(filmCard.comments[i]));
+    this.#filmCommentComponents.forEach((commentView) => render(commentView, this.#filmPopupComponent.element.querySelector('.film-details__comments-wrap')));
 
     this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
     this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
