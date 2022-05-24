@@ -34,6 +34,7 @@ export default class FilmCardPresenter {
 
     this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
     this.#filmPopupComponent.setControlButtonClickHandler(this.#handleControlClick);
+    this.#filmPopupComponent.setCommentDeleteButtonClickHandler(this.#handleCommentDeleteClick);
 
     if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
       render(this.#filmCardComponent, this.#container);
@@ -52,13 +53,17 @@ export default class FilmCardPresenter {
     remove(prevFilmPopupComponent);
   };
 
+  #handleCommentDeleteClick = (comments) => {
+    this.#changeData({...this.#filmPopupComponent.state, comments: [...comments]});
+  };
+
   #handleFilmCardClick = (cardData) => () => {
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
     this.#renderFilmPopup(cardData);
   };
 
   #handleControlClick = (controlType) => {
-    this.#changeData({...this.#filmCard, [controlType]: !this.#filmCard[controlType]});
+    this.#changeData({...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}});
   };
 
   #renderFilmPopup = () => {

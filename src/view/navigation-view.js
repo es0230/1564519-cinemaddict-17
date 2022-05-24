@@ -18,9 +18,9 @@ export default class NavigationView extends AbstractView{
   constructor (filmCardModel) {
     super();
     this.#filmCards = filmCardModel.filmCards;
-    this.#watchlist = this.#filmCards.filter((el) => el.watchlist);
-    this.#history = this.#filmCards.filter((el) => el.watched);
-    this.#favorites = this.#filmCards.filter((el) => el.favorite);
+    this.#watchlist = this.#filmCards.filter((el) => el.userDetails.watchlist);
+    this.#history = this.#filmCards.filter((el) => el.userDetails.watched);
+    this.#favorites = this.#filmCards.filter((el) => el.userDetails.favorite);
   }
 
   get template() {

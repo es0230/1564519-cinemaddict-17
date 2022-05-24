@@ -1,21 +1,24 @@
 import AbstractView from '../framework/view/abstract-view.js';
+
 const ACTIVE_CONTROL_ITEM_CLASS = 'film-card__controls-item--active';
 
 const createFilmCardTemplate = (filmCard) => {
-  const {poster, title, rating, releaseYear, duration, genre, description, commentsCount, watchlist, watched, favorite} = filmCard;
+  const {title, totalRating, poster, release, runtime, genre, description} = filmCard.filmInfo;
+  const comments = filmCard.comments;
+  const {watchlist, watched, favorite} = filmCard.userDetails;
 
   return `<article class="film-card">
     <a class="film-card__link">
       <h3 class="film-card__title">${title}</h3>
-      <p class="film-card__rating">${rating}</p>
+      <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${releaseYear}</span>
-        <span class="film-card__duration">${duration}</span>
+        <span class="film-card__year">${release.date}</span>
+        <span class="film-card__duration">${Math.floor(runtime/60)} h ${runtime % 60} min</span>
         <span class="film-card__genre">${genre}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${description}</p>
-      <span class="film-card__comments">${commentsCount}</span>
+      <span class="film-card__comments">${comments.length} comment${comments.length !== 1 ? 's' : ''}</span>
     </a>
     <div class="film-card__controls">
       <button data-control-type="watchlist" class="film-card__controls-item film-card__controls-item--add-to-watchlist ${watchlist ? ACTIVE_CONTROL_ITEM_CLASS : ''}" type="button">Add to watchlist</button>
@@ -62,6 +65,5 @@ export default class FilmCardView extends AbstractView{
       const controlType = evt.target.dataset.controlType;
       this._callback.controlClick(controlType);
     }
-
   };
 }

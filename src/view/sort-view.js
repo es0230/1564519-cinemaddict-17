@@ -12,8 +12,6 @@ const createSortTemplate = () => (
 );
 
 export default class SortView extends AbstractView{
-
-
   get template() {
     return createSortTemplate();
   }
@@ -26,7 +24,7 @@ export default class SortView extends AbstractView{
   #clickHandler = (evt) => {
     if (evt.target.dataset.sortType) {
       evt.preventDefault();
-      this.element.querySelectorAll('.sort__button').forEach((el) => el.classList.remove(ACTIVE_SORT_BUTTON_CLASS)); //.forEach((el) => el.classList.remove(ACTIVE_SORT_BUTTON_CLASS));
+      this.element.querySelectorAll('.sort__button').forEach((el) => el.classList.remove(ACTIVE_SORT_BUTTON_CLASS));
       evt.target.classList.add(ACTIVE_SORT_BUTTON_CLASS);
       const sortType = evt.target.dataset.sortType;
       this._callback.click(sortType);

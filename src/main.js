@@ -1,4 +1,3 @@
-
 import UserRatingView from './view/user-rank-view.js';
 import FilmsSectionView from './view/films-section-view.js';
 import FilmsPresenter from './presenter/board-presenter.js';

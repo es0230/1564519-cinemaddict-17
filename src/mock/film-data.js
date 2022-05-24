@@ -1,6 +1,7 @@
 import { getRandomInteger, getRandomName } from '../util.js';
 import { MOCKTEXT, FIRST_NAMES, LAST_NAMES } from '../const.js';
 import { nanoid } from 'nanoid';
+import { generateComment } from './film-comments.js';
 
 const filmPostersSrcs = [
   'made-for-each-other.png',
@@ -32,6 +33,15 @@ const filmGenres = [
   'Sci-fi'
 ];
 
+const countries = [
+  'USA',
+  'Canada',
+  'USSR',
+  'United Kingdom',
+  'France',
+  'Italy'
+];
+
 const generateFilmDescription = () => {
   const filmDescription = MOCKTEXT.split('. ', getRandomInteger(1, 5)).join('. ');
   if (filmDescription.length > 140) {
@@ -44,21 +54,29 @@ const generateFilm = () => {
   const filmNumber = getRandomInteger(0, filmPostersSrcs.length - 1);
   return {
     id: nanoid(),
-    poster: `./images/posters/${filmPostersSrcs[filmNumber]}`,
-    title: filmTitles[filmNumber],
-    originalTitle: filmTitles[filmNumber],
-    rating: `${getRandomInteger(1, 9)}.${getRandomInteger(1, 9)}`,
-    director: getRandomName(FIRST_NAMES, LAST_NAMES),
-    screenwriter: Array.from({length: 2}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),  //  почему если в параметрах Array.from() length вычисляется
-    actors: Array.from({length: 4}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),        //  то некоторые элементы массива становятся undefined
-    releaseYear: getRandomInteger(1930, 1960),
-    duration: `${getRandomInteger(1, 2)}h ${getRandomInteger(0, 59)}m`,
-    genre: filmGenres[filmNumber],
-    description: generateFilmDescription(),
-    commentsCount: `${getRandomInteger(0, 10)} comments`,
-    watchlist: Boolean(Math.round(getRandomInteger())),
-    watched: Boolean(Math.round(getRandomInteger())),
-    favorite: Boolean(Math.round(getRandomInteger())),
+    comments: Array.from({length: getRandomInteger(0, 9)}, generateComment),
+    filmInfo: {
+      title: filmTitles[filmNumber],
+      originalTitle: filmTitles[filmNumber],
+      totalRating: `${getRandomInteger(1, 9)}.${getRandomInteger(1, 9)}`,
+      poster: `./images/posters/${filmPostersSrcs[filmNumber]}`,
+      ageRating: getRandomInteger(0, 6) * 3,
+      director: getRandomName(FIRST_NAMES, LAST_NAMES),
+      writers: Array.from({length: 2}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),
+      actors: Array.from({length: 4}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),
+      release: {
+        date: getRandomInteger(1930, 1960),
+        releaseCountry: countries[getRandomInteger(0, 5)]
+      },
+      runtime: getRandomInteger(50, 120),
+      genre: [filmGenres[filmNumber]],
+      description: generateFilmDescription(),
+    },
+    userDetails: {
+      watchlist: Boolean(Math.round(getRandomInteger())),
+      watched: Boolean(Math.round(getRandomInteger())),
+      favorite: Boolean(Math.round(getRandomInteger())),
+    },
   };
 };
 
