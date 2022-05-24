@@ -242,17 +242,17 @@ export default class FilmPopupView extends AbstractStatefulView{
     }
   };
 
-  //setCommentDeleteClickHandler = (callback) => {
-  //  this._callback.commentDeleteButtonClick = callback;
-  //  this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#commentDeleteButtonClickHandler);
-  //};
+  setCommentDeleteButtonClickHandler = (callback) => {
+    this._callback.commentDeleteButtonClick = callback;
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#commentDeleteButtonClickHandler);
+  };
 
-  //#commentDeleteButtonClickHandler = (evt) => {
-  //  evt.preventDefault();
-  //  if (evt.target.tagName === 'BUTTON') {
-  //    this._callback.commentDeleteButtonClick(this._state);
-  //  }
-  //};
+  #commentDeleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.tagName === 'BUTTON') {
+      this._callback.commentDeleteButtonClick(this._state.comments);
+    }
+  };
 
   setControlButtonClickHandler = (callback) => {
     this._callback.controlButtonClick = callback;
