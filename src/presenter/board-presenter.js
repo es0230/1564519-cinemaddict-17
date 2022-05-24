@@ -40,7 +40,7 @@ export default class FilmsPresenter {
     this.#renderSortElement(this.#filmCards);
     this.#renderBoard();
     this.#renderFilmCards(this.#filmCardsToRender);
-    this.#renderNavigationBlock();
+    this.#renderNavigationBlock(this.#cardModel);
   };
 
   #renderFilmCard = (filmCard) => {
@@ -72,13 +72,10 @@ export default class FilmsPresenter {
     this.#actualizeShowMoreButton();
   };
 
-  #renderNavigationBlock = () => {
-    //const navigationPresenter = new NavigationPresenter(this.#cardModel, this.#filmCardsToRender, this.#removeFilmCards, this.#renderFilmCards, this.#actualizeShowMoreButton);
-    //navigationPresenter.init();
+  #renderNavigationBlock = (filmCards) => {
     const mainElement = document.querySelector('.main');
-    this.#navigationBlock = new NavigationView(this.#cardModel);
+    this.#navigationBlock = new NavigationView(filmCards);
     render(this.#navigationBlock, mainElement, RenderPosition.AFTERBEGIN);
-    //this.#navigationBlock.setClickHandler(this.#handleNavigationLinkClick);
   }; //
 
   #handleNavigationLinkClick = (category) => {
