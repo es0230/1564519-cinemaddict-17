@@ -26,6 +26,10 @@ export default class FilmCommentView extends AbstractView {
     this.#comment = comment;
   }
 
+  get comment() {
+    return this.#comment;
+  }
+
   get template() {
     return createFilmCommentTemplate(this.#comment);
   }
@@ -37,6 +41,6 @@ export default class FilmCommentView extends AbstractView {
 
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(this.element);
+    this._callback.deleteClick(this);
   };
 }

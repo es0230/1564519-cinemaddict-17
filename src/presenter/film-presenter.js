@@ -1,6 +1,5 @@
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
-import FilmCommentView from '../view/film-popup-comment-view.js';
 import { render, remove, replace } from '../framework/render.js';
 
 export default class FilmCardPresenter {
@@ -10,7 +9,6 @@ export default class FilmCardPresenter {
 
   #filmCardComponent = null;
   #filmPopupComponent = null;
-  #filmCommentComponents = null;
 
   #filmCard = null;
 
@@ -29,16 +27,14 @@ export default class FilmCardPresenter {
     const prevFilmPopupComponent = this.#filmPopupComponent;
 
     this.#filmCardComponent = new FilmCardView(filmCard);
-    this.#filmPopupComponent = new FilmPopupView(filmCard);
-
-    this.#filmCommentComponents = Array.from({length: filmCard.comments.length}, (el, i) => new FilmCommentView(filmCard.comments[i]));
-    this.#filmCommentComponents.forEach(this.#renderFilmComment);
+    this.#filmPopupComponent = new FilmPopupView(filmCard, this.#filmCardComponent);
 
     this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
     this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
 
     this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
     this.#filmPopupComponent.setControlButtonClickHandler(this.#handleControlClick);
+    //this.#filmPopupComponent.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
 
     if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
       render(this.#filmCardComponent, this.#container);
@@ -57,13 +53,8 @@ export default class FilmCardPresenter {
     remove(prevFilmPopupComponent);
   };
 
-  #renderFilmComment = (commentView) => {
-    commentView.setDeleteClickHandler(this.#handleDeleteCommentClick);
-    render(commentView, this.#filmPopupComponent.element.querySelector('.film-details__comments-list'));
-  };
-
-  #handleDeleteCommentClick = (comment) => {
-    comment.remove();
+  #handleCommentDeleteClick = () => {
+    //
   };
 
   #handleFilmCardClick = (cardData) => () => {
@@ -72,7 +63,7 @@ export default class FilmCardPresenter {
   };
 
   #handleControlClick = (controlType) => {
-    this.#changeData({...this.#filmCard, [controlType]: !this.#filmCard[controlType]});
+    this.#changeData({...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}});
   };
 
   #renderFilmPopup = () => {

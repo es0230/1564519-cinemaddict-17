@@ -67,12 +67,6 @@ export default class FilmsPresenter {
     }
   };
 
-
-  #handleFilmCardChange = (updatedFilmCard) => {
-    this.#filmCards = updateFilmCard(this.#filmCards, updatedFilmCard);
-    this.#filmBoardPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
-  };
-
   #handleShowMoreButtonClick = () => {
     this.#renderFilmCards(this.#filmCardsToRender);
     this.#actualizeShowMoreButton();
@@ -92,7 +86,7 @@ export default class FilmsPresenter {
     this.#removeFilmCards();
     this.#renderFilmCards(this.#filmCardsToRender);
     this.#actualizeShowMoreButton();
-  };
+  }; //
 
   #removeFilmCards = () => {
     this.#filmBoardPresenter.forEach((presenter) => presenter.destroy());
@@ -117,8 +111,13 @@ export default class FilmsPresenter {
     }
   };
 
-  #renderSortElement = (cardModel) => {
-    this.#sortSection = new SortView(cardModel);
+  #handleFilmCardChange = (updatedFilmCard) => {
+    this.#filmCards = updateFilmCard(this.#filmCards, updatedFilmCard);
+    this.#filmBoardPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
+  };
+
+  #renderSortElement = () => {
+    this.#sortSection = new SortView();
     render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
     this.#sortSection.setClickHandler(this.#handleSortClick);
   };
