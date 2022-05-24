@@ -27,8 +27,8 @@ const LAST_NAMES = [
 ];
 const SortType = {
   DEFAULT: 'default',
-  DATE: 'releaseYear',
-  RATING: 'rating',
+  DATE: 'date',
+  RATING: 'totalRating',
 };
 const EmojiTypes = {
   SMILE: 'smile',

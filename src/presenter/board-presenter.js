@@ -131,8 +131,10 @@ export default class FilmsPresenter {
         this.#filmCardsToRender = this.#filmCards.slice();
         break;
       case SortType.DATE:
+        this.#filmCardsToRender.sort((a, b) => b.filmInfo.release[sortType] - a.filmInfo.release[sortType]);
+        break;
       case SortType.RATING:
-        this.#filmCardsToRender.sort((a, b) => b[sortType] - a[sortType]);
+        this.#filmCardsToRender.sort((a, b) => b.filmInfo[sortType] - a.filmInfo[sortType]);
         break;
     }
     this.#removeFilmCards();
