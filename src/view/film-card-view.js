@@ -1,4 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+
+dayjs.extend(duration);
 
 const ACTIVE_CONTROL_ITEM_CLASS = 'film-card__controls-item--active';
 
@@ -12,8 +16,8 @@ const createFilmCardTemplate = (filmCard) => {
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${release.date}</span>
-        <span class="film-card__duration">${Math.floor(runtime/60)} h ${runtime % 60} min</span>
+        <span class="film-card__year">${dayjs(release.date).format('YYYY')}</span>
+        <span class="film-card__duration">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [min]')}</span>
         <span class="film-card__genre">${genre}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
