@@ -5,6 +5,7 @@ import NavigationView from '../view/navigation-view.js';
 import SortView from '../view/sort-view.js';
 import FilmCardPresenter from './film-presenter.js';
 import {updateFilmCard} from '../util.js';
+import dayjs from 'dayjs';
 //import NavigationPresenter from './navigation-presenter.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
 import { SortType } from '../const.js';
@@ -128,7 +129,7 @@ export default class FilmsPresenter {
         this.#filmCardsToRender = this.#filmCards.slice();
         break;
       case SortType.DATE:
-        this.#filmCardsToRender.sort((a, b) => b.filmInfo.release[sortType] - a.filmInfo.release[sortType]);
+        this.#filmCardsToRender.sort((a, b) => dayjs(a.filmInfo.release[sortType]).isBefore(dayjs(b.filmInfo.release[sortType])) ? 1 : -1);
         break;
       case SortType.RATING:
         this.#filmCardsToRender.sort((a, b) => b.filmInfo[sortType] - a.filmInfo[sortType]);
