@@ -1,7 +1,11 @@
 import { getRandomInteger, getRandomName } from '../util.js';
 import { MOCKTEXT, FIRST_NAMES, LAST_NAMES } from '../const.js';
 import { nanoid } from 'nanoid';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import { generateComment } from './film-comments.js';
+
+dayjs.extend(duration);
 
 const filmPostersSrcs = [
   'made-for-each-other.png',
@@ -52,6 +56,7 @@ const generateFilmDescription = () => {
 
 const generateFilm = () => {
   const filmNumber = getRandomInteger(0, filmPostersSrcs.length - 1);
+  const randomDate = `${getRandomInteger(1940, 1970)}-${getRandomInteger(1, 12)}-${getRandomInteger(1, 28)}`;
   return {
     id: nanoid(),
     comments: Array.from({length: getRandomInteger(0, 9)}, generateComment),
@@ -65,7 +70,7 @@ const generateFilm = () => {
       writers: Array.from({length: 2}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),
       actors: Array.from({length: 4}, () => getRandomName(FIRST_NAMES, LAST_NAMES)),
       release: {
-        date: getRandomInteger(1930, 1960),
+        date: dayjs(randomDate).format('YYYY-MM-DDTHH:mm:ss.sss[Z]'),
         releaseCountry: countries[getRandomInteger(0, 5)]
       },
       runtime: getRandomInteger(50, 120),

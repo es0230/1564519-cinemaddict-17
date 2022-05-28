@@ -1,8 +1,11 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import FilmCommentView from '../view/film-popup-comment-view.js';
 import { render, remove } from '../framework/render.js';
-
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import { EmojiTypes } from '../const.js';
+
+dayjs.extend(duration);
 
 const ACTIVE_CONTROL_BUTTON_CLASS = 'film-details__control-button--active';
 
@@ -67,11 +70,11 @@ const createFilmPopupTemplate = (filmCardState) => {
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Release Date</td>
-                        <td class="film-details__cell">30 March ${release.date}</td>
+                        <td class="film-details__cell">${dayjs(release.date).format('DD MMMM YYYY')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Runtime</td>
-                        <td class="film-details__cell">${runtime}</td>
+                        <td class="film-details__cell">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [min]')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Country</td>
