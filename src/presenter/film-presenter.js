@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
 import { render, remove, replace } from '../framework/render.js';
+import { UserAction, UpdateType } from '../const.js';
 
 export default class FilmCardPresenter {
   #container = null;
@@ -54,7 +55,10 @@ export default class FilmCardPresenter {
   };
 
   #handleCommentDeleteClick = (comments) => {
-    this.#changeData({...this.#filmPopupComponent.state, comments: [...comments]});
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      UpdateType.PATCH,
+      {...this.#filmPopupComponent.state, comments: [...comments]});
   };
 
   #handleFilmCardClick = (cardData) => () => {
@@ -63,7 +67,11 @@ export default class FilmCardPresenter {
   };
 
   #handleControlClick = (controlType) => {
-    this.#changeData({...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}});
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      UpdateType.PATCH,
+      {...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}}
+    );
   };
 
   #renderFilmPopup = () => {
