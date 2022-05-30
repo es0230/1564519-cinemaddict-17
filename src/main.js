@@ -1,6 +1,6 @@
 import UserRatingView from './view/user-rank-view.js';
 import FilmsSectionView from './view/films-section-view.js';
-import FilmsPresenter from './presenter/board-presenter.js';
+import FilmsPresenter from './presenter/film-board-presenter.js';
 import FilmCardModel from './model/film-card-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';

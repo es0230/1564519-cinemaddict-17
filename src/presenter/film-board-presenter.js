@@ -5,7 +5,7 @@ import SortView from '../view/sort-view.js';
 import FilmCardPresenter from './film-presenter.js';
 import FooterView from '../view/footer-view.js';
 import dayjs from 'dayjs';
-import { render, remove, replace, RenderPosition } from '../framework/render.js';
+import { render, remove, RenderPosition, replace } from '../framework/render.js';
 import { SortType, UpdateType, UserAction } from '../const.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
@@ -19,7 +19,6 @@ export default class FilmsPresenter {
   #filmsListSection = new FilmsListSectionView();
   #showMoreButton = null;
   #noFilmCardsSection = new NoFilmCardsView();
-  #navigationBlock = null;
   #sortSection = null;
   #currentSortType = DEFAULT_SORT_TYPE;
   #footerSection = null;
@@ -72,7 +71,6 @@ export default class FilmsPresenter {
     this.#renderSortElement();
 
     render(this.#filmsListSection, this.#container);
-
     this.#renderFilmCards(filmCards.slice(0, Math.min(filmCardsCount, this.#renderedFilmCardsCount)));
     if (filmCardsCount > this.#renderedFilmCardsCount) {
       this.#renderShowMoreButton();
@@ -158,8 +156,6 @@ export default class FilmsPresenter {
     this.#filmBoardPresenter.forEach((presenter) => presenter.destroy());
     this.#filmBoardPresenter.clear();
 
-    remove(this.#sortSection);
-    remove(this.#navigationBlock);
     remove(this.#showMoreButton);
 
     if (resetRenderedFilmCardsCount) {
@@ -174,9 +170,18 @@ export default class FilmsPresenter {
   };
 
   #renderSortElement = () => {
+    const prevSortSection = this.#sortSection;
+
     this.#sortSection = new SortView(this.#currentSortType);
-    render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
     this.#sortSection.setClickHandler(this.#handleSortClick);
+
+    if (prevSortSection === null) {
+      render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
+      return;
+    }
+
+    replace(this.#sortSection, prevSortSection);
+    remove(prevSortSection);
   };
 
   #handleSortClick = (sortType) => {
