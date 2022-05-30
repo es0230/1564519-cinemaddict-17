@@ -6,7 +6,7 @@ import FilmCardPresenter from './film-presenter.js';
 import FooterView from '../view/footer-view.js';
 import dayjs from 'dayjs';
 import { render, remove, RenderPosition, replace } from '../framework/render.js';
-import { SortType, UpdateType, UserAction } from '../const.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
 const DEFAULT_SORT_TYPE = 'default';
@@ -18,9 +18,10 @@ export default class FilmsPresenter {
 
   #filmsListSection = new FilmsListSectionView();
   #showMoreButton = null;
-  #noFilmCardsSection = new NoFilmCardsView();
+  #noFilmCardsSection = null;
   #sortSection = null;
   #currentSortType = DEFAULT_SORT_TYPE;
+  #filterType = FilterType.ALL;
   #footerSection = null;
   #footerContainer = document.querySelector('.footer__statistics');
 
@@ -37,13 +38,13 @@ export default class FilmsPresenter {
   }
 
   get filmCards() {
-    const filterType = this.#filterModel.filterType;
+    this.#filterType = this.#filterModel.filterType;
     const filmCards = this.#cardModel.filmCards;
     const filteredFilmCards = filmCards.filter((el) => {
-      if (filterType === 'filmCards') {
+      if (this.#filterType === 'filmCards') {
         return true;
       }
-      return el.userDetails[filterType];
+      return el.userDetails[this.#filterType];
     });
 
     switch (this.#currentSortType) {
@@ -64,7 +65,7 @@ export default class FilmsPresenter {
     const filmCardsCount = filmCards.length;
 
     if (filmCards.length === 0) {
-      render(this.#noFilmCardsSection, this.#container);
+      this.#renderNoFilmCards();
       return;
     }
 
@@ -158,6 +159,10 @@ export default class FilmsPresenter {
 
     remove(this.#showMoreButton);
 
+    if (this.#noFilmCardsSection) {
+      remove(this.#noFilmCardsSection);
+    }
+
     if (resetRenderedFilmCardsCount) {
       this.#renderedFilmCardsCount = FILM_CARDS_COUNT_PER_STEP;
     } else {
@@ -191,5 +196,10 @@ export default class FilmsPresenter {
     this.#currentSortType = sortType;
     this.#clearBoard({resetRenderedFilmCardsCount: true});
     this.#renderBoard();
+  };
+
+  #renderNoFilmCards = () => {
+    this.#noFilmCardsSection = new NoFilmCardsView(this.#filterType);
+    render(this.#noFilmCardsSection, this.#filmsListSection.element, RenderPosition.AFTERBEGIN);
   };
 }
