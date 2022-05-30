@@ -23,7 +23,7 @@ export default class FilterPresenter {
   init = () => {
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new FilterView(this.#filmCardModel.filmCards);
+    this.#filterComponent = new FilterView(this.#filmCardModel.filmCards, this.#filterModel.filterType);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
