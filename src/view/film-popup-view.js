@@ -164,7 +164,7 @@ export default class FilmPopupView extends AbstractStatefulView{
   }
 
   get state() {
-    return FilmPopupView.parseStateToCard(this._state);
+    return FilmPopupView.parseCardToState(this._state);
   }
 
   static parseCardToState = (filmCard) => ({...filmCard,
@@ -173,7 +173,7 @@ export default class FilmPopupView extends AbstractStatefulView{
     commentList: null,
   });
 
-  static parseStateToCard = (filmCardState) => { // при закрытии попапа
+  static parseStateToCard = (filmCardState) => { // при закрытии
     const filmCard = {...filmCardState};
 
     delete filmCard.currentEmotion;
@@ -241,7 +241,7 @@ export default class FilmPopupView extends AbstractStatefulView{
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this._callback.escKeyDown(FilmPopupView.parseStateToCard(this._state));
+      this._callback.escKeyDown();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   };
@@ -269,14 +269,6 @@ export default class FilmPopupView extends AbstractStatefulView{
     }
   };
 
-  #getNewCommentInfo = () => ({
-    id: nanoid(),
-    text: this._state.newCommentText,
-    emotion: this._state.currentEmotion,
-    author: 'lol',
-    date: dayjs(),
-  });
-
   setControlButtonClickHandler = (callback) => {
     this._callback.controlButtonClick = callback;
     this.element.querySelector('.film-details__controls').addEventListener('click', this.#controlButtonClickHandler);
@@ -289,6 +281,14 @@ export default class FilmPopupView extends AbstractStatefulView{
       this._callback.controlButtonClick(clickedControlType);
     }
   };
+
+  #getNewCommentInfo = () => ({
+    id: nanoid(),
+    text: this._state.newCommentText,
+    emotion: this._state.currentEmotion,
+    author: 'lol',
+    date: dayjs(),
+  });
 
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__emoji-list')

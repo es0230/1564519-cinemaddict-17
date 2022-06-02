@@ -90,12 +90,13 @@ export default class FilmCardPresenter {
     this.#popupOpened = !this.#popupOpened;
   };
 
-  #handlePopupClosing = (cardData) => {
+  #handlePopupClosing = (filmCardDataChanges) => {
     this.#changeData(
       UserAction.UPDATE_CARD,
       UpdateType.MINOR,
-      {...cardData}
+      {...this.#filmCard, ...filmCardDataChanges}
     );
+    //this.#filmPopupComponent.element.remove();
     this.#popupOpened = !this.#popupOpened;
   };
 
