@@ -36,6 +36,7 @@ export default class FilmCardPresenter {
     this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
     this.#filmPopupComponent.setControlButtonClickHandler(this.#handleControlClick);
     this.#filmPopupComponent.setCommentDeleteButtonClickHandler(this.#handleCommentDeleteClick);
+    this.#filmPopupComponent.setCommentAddHandler(this.#handleCommentAdd);
 
     if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
       render(this.#filmCardComponent, this.#container);
@@ -58,7 +59,16 @@ export default class FilmCardPresenter {
     this.#changeData(
       UserAction.UPDATE_CARD,
       UpdateType.PATCH,
-      {...this.#filmPopupComponent.state, comments: [...comments]});
+      {...this.#filmPopupComponent.state, comments: [...comments]}
+    );
+  };
+
+  #handleCommentAdd = (comments, comment) => {
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      UpdateType.PATCH,
+      {...this.#filmPopupComponent.state, comments: [...comments, comment]}
+    );
   };
 
   #handleFilmCardClick = (cardData) => () => {
@@ -80,8 +90,12 @@ export default class FilmCardPresenter {
     this.#popupOpened = !this.#popupOpened;
   };
 
-  #handlePopupClosing = () => {
-    this.#filmPopupComponent.element.remove();
+  #handlePopupClosing = (cardData) => {
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      UpdateType.MINOR,
+      {...cardData}
+    );
     this.#popupOpened = !this.#popupOpened;
   };
 

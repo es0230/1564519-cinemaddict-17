@@ -63,7 +63,6 @@ export default class FilmsPresenter {
   #renderBoard = () => {
     const filmCards = this.filmCards;
     const filmCardsCount = filmCards.length;
-
     if (filmCards.length === 0) {
       this.#renderNoFilmCards();
       return;
@@ -82,6 +81,19 @@ export default class FilmsPresenter {
       render(this.#footerSection, this.#footerContainer);
     }
 
+  };
+
+  #renderSortElement = () => {
+    const prevSortSection = this.#sortSection;
+    this.#sortSection = new SortView(this.#currentSortType);
+    this.#sortSection.setClickHandler(this.#handleSortClick);
+    if (prevSortSection === null) {
+      render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
+      return;
+    }
+
+    replace(this.#sortSection, prevSortSection);
+    remove(prevSortSection);
   };
 
   #renderFilmCards = (filmCardsToRender) => {
@@ -172,21 +184,6 @@ export default class FilmsPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
     }
-  };
-
-  #renderSortElement = () => {
-    const prevSortSection = this.#sortSection;
-
-    this.#sortSection = new SortView(this.#currentSortType);
-    this.#sortSection.setClickHandler(this.#handleSortClick);
-
-    if (prevSortSection === null) {
-      render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
-      return;
-    }
-
-    replace(this.#sortSection, prevSortSection);
-    remove(prevSortSection);
   };
 
   #handleSortClick = (sortType) => {

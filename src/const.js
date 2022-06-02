@@ -59,7 +59,7 @@ const UserAction = {
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
-  NAJOR: 'MAJOR',
+  MAJOR: 'MAJOR',
 };
 
 export { FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
