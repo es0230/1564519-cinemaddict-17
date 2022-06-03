@@ -38,14 +38,12 @@ export default class FilterView extends AbstractView{
   };
 
   #filterTypeChangeHandler = (evt) => {
-    if (evt.target.dataset.listType) {
+    const listType = evt.target.dataset.listType || evt.target.parentElement.dataset.listType;
+    if (listType) {
       evt.preventDefault();
       this.element.querySelectorAll('.main-navigation__item').forEach((el) => el.classList.remove(ACTIVE_FILTER_BUTTON_CLASS));
       evt.target.classList.add(ACTIVE_FILTER_BUTTON_CLASS);
-      const listType = evt.target.dataset.listType;
-      //this.#filterType = listType;
       this._callback.filterTypeChange(listType);
-
     }
   };
 }
