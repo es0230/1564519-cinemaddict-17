@@ -79,7 +79,7 @@ export default class FilmCardPresenter {
   #handleControlClick = (controlType) => {
     this.#changeData(
       UserAction.UPDATE_CARD,
-      UpdateType.MINOR,
+      this.#popupOpened ? UpdateType.PATCH : UpdateType.MINOR,
       {...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}}
     );
   };
