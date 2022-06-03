@@ -4,6 +4,7 @@ import { render, remove } from '../framework/render.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { EmojiTypes } from '../const.js';
+import { nanoid } from 'nanoid';
 
 dayjs.extend(duration);
 
@@ -163,7 +164,7 @@ export default class FilmPopupView extends AbstractStatefulView{
   }
 
   get state() {
-    return FilmPopupView.parseStateToCard(this._state);
+    return FilmPopupView.parseCardToState(this._state);
   }
 
   static parseCardToState = (filmCard) => ({...filmCard,
@@ -172,7 +173,7 @@ export default class FilmPopupView extends AbstractStatefulView{
     commentList: null,
   });
 
-  static parseStateToCard = (filmCardState) => { // при удалении коммента, переключении control кнопок, при отправке комментария
+  static parseStateToCard = (filmCardState) => { // при закрытии
     const filmCard = {...filmCardState};
 
     delete filmCard.currentEmotion;
@@ -257,6 +258,17 @@ export default class FilmPopupView extends AbstractStatefulView{
     }
   };
 
+  setCommentAddHandler = (callback) => {
+    this._callback.commentAdd = callback;
+    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#commentAddHandler);
+  };
+
+  #commentAddHandler = (evt) => {
+    if (evt.ctrlKey && evt.key === 'Enter') {
+      this._callback.commentAdd(this._state.comments, this.#getNewCommentInfo());
+    }
+  };
+
   setControlButtonClickHandler = (callback) => {
     this._callback.controlButtonClick = callback;
     this.element.querySelector('.film-details__controls').addEventListener('click', this.#controlButtonClickHandler);
@@ -270,11 +282,21 @@ export default class FilmPopupView extends AbstractStatefulView{
     }
   };
 
+  #getNewCommentInfo = () => ({
+    id: nanoid(),
+    text: this._state.newCommentText,
+    emotion: this._state.currentEmotion,
+    author: 'lol',
+    date: dayjs(),
+  });
+
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__emoji-list')
       .addEventListener('click', this.#emojiClickHandler);
     this.element.querySelector('.film-details__comment-input')
       .addEventListener('input', this.#commentInputHandler);
+    this.element.querySelector('.film-details__comment-input')
+      .addEventListener('keydown', this.#commentAddHandler);
   };
 
   _restoreHandlers = () => {

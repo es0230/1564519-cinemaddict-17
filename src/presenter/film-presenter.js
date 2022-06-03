@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
 import { render, remove, replace } from '../framework/render.js';
+import { UserAction, UpdateType } from '../const.js';
 
 export default class FilmCardPresenter {
   #container = null;
@@ -35,6 +36,7 @@ export default class FilmCardPresenter {
     this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
     this.#filmPopupComponent.setControlButtonClickHandler(this.#handleControlClick);
     this.#filmPopupComponent.setCommentDeleteButtonClickHandler(this.#handleCommentDeleteClick);
+    this.#filmPopupComponent.setCommentAddHandler(this.#handleCommentAdd);
 
     if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
       render(this.#filmCardComponent, this.#container);
@@ -54,7 +56,19 @@ export default class FilmCardPresenter {
   };
 
   #handleCommentDeleteClick = (comments) => {
-    this.#changeData({...this.#filmPopupComponent.state, comments: [...comments]});
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      UpdateType.PATCH,
+      {...this.#filmPopupComponent.state, comments: [...comments]}
+    );
+  };
+
+  #handleCommentAdd = (comments, comment) => {
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      UpdateType.PATCH,
+      {...this.#filmPopupComponent.state, comments: [...comments, comment]}
+    );
   };
 
   #handleFilmCardClick = (cardData) => () => {
@@ -63,7 +77,11 @@ export default class FilmCardPresenter {
   };
 
   #handleControlClick = (controlType) => {
-    this.#changeData({...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}});
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      this.#popupOpened ? UpdateType.PATCH : UpdateType.MINOR,
+      {...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}}
+    );
   };
 
   #renderFilmPopup = () => {
@@ -72,8 +90,12 @@ export default class FilmCardPresenter {
     this.#popupOpened = !this.#popupOpened;
   };
 
-  #handlePopupClosing = () => {
-    this.#filmPopupComponent.element.remove();
+  #handlePopupClosing = (filmCardDataChanges) => {
+    this.#changeData(
+      UserAction.UPDATE_CARD,
+      UpdateType.MINOR,
+      {...this.#filmCard, ...filmCardDataChanges}
+    );
     this.#popupOpened = !this.#popupOpened;
   };
 
