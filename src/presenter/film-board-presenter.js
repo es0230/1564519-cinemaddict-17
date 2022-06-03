@@ -1,3 +1,4 @@
+import UserRankView from '../view/user-rank-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import FilmsListSectionView from '../view/films-list-view.js';
 import NoFilmCardsView from '../view/no-film-cards-view.js';
@@ -16,6 +17,7 @@ export default class FilmsPresenter {
   #cardModel = null;
   #filterModel = null;
 
+  #userRankSection = null;
   #filmsListSection = new FilmsListSectionView();
   #showMoreButton = null;
   #noFilmCardsSection = null;
@@ -63,6 +65,11 @@ export default class FilmsPresenter {
   #renderBoard = () => {
     const filmCards = this.filmCards;
     const filmCardsCount = filmCards.length;
+
+    const siteHeader = document.querySelector('.header');
+    this.#userRankSection = new UserRankView(filmCards);
+    render(this.#userRankSection, siteHeader);
+
     if (filmCards.length === 0) {
       this.#renderNoFilmCards();
       return;
@@ -170,6 +177,7 @@ export default class FilmsPresenter {
     this.#filmBoardPresenter.clear();
 
     remove(this.#showMoreButton);
+    remove(this.#userRankSection);
 
     if (this.#noFilmCardsSection) {
       remove(this.#noFilmCardsSection);
