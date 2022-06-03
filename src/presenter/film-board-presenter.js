@@ -197,6 +197,7 @@ export default class FilmsPresenter {
 
   #renderNoFilmCards = () => {
     this.#noFilmCardsSection = new NoFilmCardsView(this.#filterType);
+    document.querySelector('.sort').classList.add('visually-hidden');
     render(this.#noFilmCardsSection, this.#filmsListSection.element, RenderPosition.AFTERBEGIN);
   };
 }

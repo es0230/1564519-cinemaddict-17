@@ -96,7 +96,6 @@ export default class FilmCardPresenter {
       UpdateType.MINOR,
       {...this.#filmCard, ...filmCardDataChanges}
     );
-    //this.#filmPopupComponent.element.remove();
     this.#popupOpened = !this.#popupOpened;
   };
 
