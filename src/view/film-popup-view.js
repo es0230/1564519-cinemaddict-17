@@ -150,7 +150,6 @@ const createFilmPopupTemplate = (filmCardState) => {
 export default class FilmPopupView extends AbstractStatefulView{
   _state = null;
   #commentModel = null;
-  #comments = null;
 
   constructor (filmCard, commentModel) {
     super();

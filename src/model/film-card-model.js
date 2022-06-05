@@ -25,16 +25,22 @@ export default class FilmCardModel extends Observable{
     this._notify(UpdateType.INIT);
   };
 
-  updateCard = (updateType, update) => {
+  updateCard = async (updateType, update) => {
     const index = this.#filmCards.findIndex((filmCard) => filmCard.id === update.id);
 
-    this.#filmCards = [
-      ...this.#filmCards.slice(0, index),
-      update,
-      ...this.#filmCards.slice(index + 1)
-    ];
+    try {
+      const response = await this.#filmCardsApiService.updateFilmCard(update);
+      const updatedCard = this.#adaptToClient(response);
+      this.#filmCards = [
+        ...this.#filmCards.slice(0, index),
+        updatedCard,
+        ...this.#filmCards.slice(index + 1)
+      ];
 
-    this._notify(updateType, update);
+      this._notify(updateType, updatedCard);
+    } catch(err) {
+      throw new Error('Can\'t update film card');
+    }
   };
 
   addCard = (updateType, update) => {

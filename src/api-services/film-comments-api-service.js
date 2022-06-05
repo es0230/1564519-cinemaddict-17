@@ -8,11 +8,6 @@ const Method = {
 export default class FilmCommentsApiService extends ApiService {
   #filmCards = null;
 
-  constructor(endPoint, authorization, filmCardModel) {
-    super(endPoint, authorization);
-    this.#filmCards = filmCardModel;
-  }
-
   getComments = (filmId) =>
     this._load({url: `comments/${filmId}`})
       .then(ApiService.parseResponse);

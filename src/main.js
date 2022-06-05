@@ -13,10 +13,9 @@ import { render } from './framework/render.js';
 
 const siteMain = document.querySelector('.main');
 
+const filmCommentModel = new FilmCommentModel(new FilmCommentsApiService(END_POINT, AUTHORIZATION));
 const filmCardModel = new FilmCardModel(new FilmCardsApiService(END_POINT, AUTHORIZATION));
 filmCardModel.init();
-
-const filmCommentModel = new FilmCommentModel(new FilmCommentsApiService(END_POINT, AUTHORIZATION, filmCardModel));
 
 const filterModel = new FilterModel();
 
