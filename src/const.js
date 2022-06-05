@@ -60,6 +60,11 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
-export { FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
+
+const AUTHORIZATION = 'Basic fsdf221q3llpf099';
+const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict/';
+
+export { AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};

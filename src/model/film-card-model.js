@@ -1,21 +1,29 @@
 import Observable from '../framework/observable.js';
-import { generateFilm } from '../mock/film-data.js';
+import { UpdateType } from '../const.js';
 
 
 export default class FilmCardModel extends Observable{
-  #filmCards = Array.from({length: 14}, generateFilm);
+  #filmCards = [];
   #filmCardsApiService = null;
 
   constructor(filmCardsApiService) {
     super();
     this.#filmCardsApiService = filmCardsApiService;
-
-    this.#filmCardsApiService.filmCards.then((filmCards) => console.log(filmCards.map(this.#adaptToClient)));
   }
 
   get filmCards() {
     return this.#filmCards;
   }
+
+  init = async () => {
+    try {
+      const filmCards = await this.#filmCardsApiService.filmCards;
+      this.#filmCards = filmCards.map(this.#adaptToClient);
+    } catch(err) {
+      this.#filmCards = [];
+    }
+    this._notify(UpdateType.INIT);
+  };
 
   updateCard = (updateType, update) => {
     const index = this.#filmCards.findIndex((filmCard) => filmCard.id === update.id);

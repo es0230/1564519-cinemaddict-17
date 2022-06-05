@@ -7,18 +7,21 @@ export default class FilmCardPresenter {
   #container = null;
   #changeData = null;
   #removePopups = null;
+  #commentModel = null;
 
   #filmCardComponent = null;
   #filmPopupComponent = null;
 
   #filmCard = null;
+  #filmComments = null;
 
   #popupOpened = false;
 
-  constructor (container, changeData, removePopups) {
+  constructor (container, changeData, removePopups, commentModel) {
     this.#container = container;
     this.#changeData = changeData;
     this.#removePopups = removePopups;
+    this.#commentModel = commentModel;
   }
 
   init = (filmCard) => {
@@ -74,6 +77,9 @@ export default class FilmCardPresenter {
   #handleFilmCardClick = (cardData) => () => {
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
     this.#renderFilmPopup(cardData);
+    this.#filmComments = this.#commentModel.getFilmComments(this.#filmCard.id)
+      .then((comments) => console.log(comments));
+
   };
 
   #handleControlClick = (controlType) => {
