@@ -31,7 +31,7 @@ export default class FilmCardPresenter {
     const prevFilmPopupComponent = this.#filmPopupComponent;
 
     this.#filmCardComponent = new FilmCardView(filmCard);
-    this.#filmPopupComponent = new FilmPopupView(filmCard);
+    this.#filmPopupComponent = new FilmPopupView(filmCard, this.#commentModel);
 
     this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
     this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
@@ -77,9 +77,6 @@ export default class FilmCardPresenter {
   #handleFilmCardClick = (cardData) => () => {
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
     this.#renderFilmPopup(cardData);
-    this.#filmComments = this.#commentModel.getFilmComments(this.#filmCard.id)
-      .then((adaptedComments) => console.log(adaptedComments));
-
   };
 
   #handleControlClick = (controlType) => {
@@ -92,6 +89,7 @@ export default class FilmCardPresenter {
 
   #renderFilmPopup = () => {
     this.#removePopups();
+    this.#filmPopupComponent.renderFilmComments();
     render(this.#filmPopupComponent, document.querySelector('body'));
     this.#popupOpened = !this.#popupOpened;
   };

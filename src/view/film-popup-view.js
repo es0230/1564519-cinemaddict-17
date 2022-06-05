@@ -149,12 +149,13 @@ const createFilmPopupTemplate = (filmCardState) => {
 
 export default class FilmPopupView extends AbstractStatefulView{
   _state = null;
+  #commentModel = null;
+  #comments = null;
 
-  constructor (filmCard) {
+  constructor (filmCard, commentModel) {
     super();
     this._state = FilmPopupView.parseCardToState(filmCard);
-
-    this.#renderFilmComments(this._state);
+    this.#commentModel = commentModel;
 
     this.#setInnerHandlers();
   }
@@ -188,12 +189,17 @@ export default class FilmPopupView extends AbstractStatefulView{
     render(commentView, this.element.querySelector('.film-details__comments-list'));
   };
 
-  #renderFilmComments = (state) => {
-    if (state.commentList === null) {
-      state.commentList = Array.from({length: state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
-    }
-    state.commentList.forEach((comment) => this.#renderFilmComment(comment));
-  };
+  renderFilmComments () {
+    this.#commentModel.getFilmComments(this._state.id)
+      .then((comments) => {this._state.comments = comments;})
+      .then(() => {
+        if (this._state.commentList === null) {
+          this._state.commentList = Array.from({length: this._state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
+        }
+        this._state.commentList.forEach((comment) => this.#renderFilmComment(comment));
+      });
+
+  }
 
   #handleDeleteCommentClick = (commentView) => {
     remove(commentView);
@@ -201,7 +207,7 @@ export default class FilmPopupView extends AbstractStatefulView{
     this._state.commentList.splice(commentIndex, 1);
     this._state.comments.splice(commentIndex, 1);
     this.updateElement(this._state.commentList);
-    this.#renderFilmComments(this._state);
+    this.renderFilmComments();
   };
 
   #commentInputHandler = (evt) => {
@@ -218,7 +224,7 @@ export default class FilmPopupView extends AbstractStatefulView{
       this.updateElement({
         currentEmotion: clickedEmojiType
       });
-      this.#renderFilmComments(this._state);
+      this.renderFilmComments();
     }
   };
 
