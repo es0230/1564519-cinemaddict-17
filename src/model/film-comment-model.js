@@ -14,7 +14,7 @@ export default class FilmCommentModel extends Observable{
     return this.#filmComments;
   }
 
-  getFilmComments = (filmId) => this.#filmCommentsApiService.getComments(filmId);
+  getFilmComments = (filmId) => this.#filmCommentsApiService.getComments(filmId).then((comments) => comments.map(this.#adaptToClient));
 
   addComment = (updateType, update) => {
     this.#filmComments = [

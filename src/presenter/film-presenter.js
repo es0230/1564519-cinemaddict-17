@@ -78,7 +78,7 @@ export default class FilmCardPresenter {
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
     this.#renderFilmPopup(cardData);
     this.#filmComments = this.#commentModel.getFilmComments(this.#filmCard.id)
-      .then((comments) => console.log(comments));
+      .then((adaptedComments) => console.log(adaptedComments));
 
   };
 
