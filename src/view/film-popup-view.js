@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import FilmCommentView from '../view/film-popup-comment-view.js';
-import { render, remove } from '../framework/render.js';
+import { render } from '../framework/render.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { EmojiTypes } from '../const.js';
@@ -27,7 +27,7 @@ const FAVORITE_CONTROL_BUTTON_TEXT = {
 
 const createFilmPopupTemplate = (filmCardState) => {
   const {title, originalTitle, totalRating, poster, ageRating, director, writers, actors, release, runtime, genre, description} = filmCardState.filmInfo;
-  const comments = filmCardState.comments;
+  const commentIds = filmCardState.commentIds;
   const {watchlist, watched, favorite} = filmCardState.userDetails;
   const {currentEmotion, newCommentText} = filmCardState;
 
@@ -104,7 +104,7 @@ const createFilmPopupTemplate = (filmCardState) => {
 
               <div class="film-details__bottom-container">
                 <section class="film-details__comments-wrap">
-                  <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+                  <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentIds.length}</span></h3>
 
                   <ul class="film-details__comments-list">
 
@@ -163,51 +163,41 @@ export default class FilmPopupView extends AbstractStatefulView{
     return createFilmPopupTemplate(this._state);
   }
 
-  get state() {
-    return FilmPopupView.parseCardToState(this._state);
+  get filmCard() {
+    return FilmPopupView.parseStateToCard(this._state);
   }
 
   static parseCardToState = (filmCard) => ({...filmCard,
     currentEmotion: null,
     newCommentText: null,
     commentList: null,
+    commentIds: filmCard.comments,
+    comments: null,
   });
 
   static parseStateToCard = (filmCardState) => { // при закрытии
     const filmCard = {...filmCardState};
+    filmCard.comments = filmCardState.commentIds;
 
     delete filmCard.currentEmotion;
     delete filmCard.newCommentText;
     delete filmCard.commentList;
+    delete filmCard.commentIds;
 
     return filmCard;
   };
 
   #renderFilmComment = (commentView) => {
-    commentView.setDeleteClickHandler(this.#handleDeleteCommentClick);
     render(commentView, this.element.querySelector('.film-details__comments-list'));
   };
 
-  renderFilmComments () {
-    this.#commentModel.getFilmComments(this._state.id)
-      .then((comments) => {this._state.comments = comments;})
-      .then(() => {
-        if (this._state.commentList === null) {
-          this._state.commentList = Array.from({length: this._state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
-        }
-        this._state.commentList.forEach((comment) => this.#renderFilmComment(comment));
-      });
-
+  renderFilmComments (comments) {
+    this._state.comments = comments;
+    if (this._state.commentList === null) {
+      this._state.commentList = Array.from({length: this._state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
+    }
+    this._state.commentList.forEach((comment) => this.#renderFilmComment(comment));
   }
-
-  #handleDeleteCommentClick = (commentView) => {
-    remove(commentView);
-    const commentIndex = this._state.commentList.indexOf(commentView);
-    this._state.commentList.splice(commentIndex, 1);
-    this._state.comments.splice(commentIndex, 1);
-    this.updateElement(this._state.commentList);
-    this.renderFilmComments();
-  };
 
   #commentInputHandler = (evt) => {
     evt.preventDefault();
@@ -223,7 +213,7 @@ export default class FilmPopupView extends AbstractStatefulView{
       this.updateElement({
         currentEmotion: clickedEmojiType
       });
-      this.renderFilmComments();
+      this.renderFilmComments(this._state.comments);
     }
   };
 
@@ -259,7 +249,7 @@ export default class FilmPopupView extends AbstractStatefulView{
   #commentDeleteButtonClickHandler = (evt) => {
     evt.preventDefault();
     if (evt.target.tagName === 'BUTTON') {
-      this._callback.commentDeleteButtonClick(this._state.comments);
+      this._callback.commentDeleteButtonClick(evt.target.dataset.commentId);
     }
   };
 

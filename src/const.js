@@ -51,9 +51,8 @@ const FilterType = {
 
 const UserAction = {
   UPDATE_CARD: 'UPDATE_CARD',
-  ADD_CARD: 'ADD_CARD',
-  DELETE_CARD: 'DELETE_CARD',
-
+  DELETE_COMMENT: 'DELETE_COMMENT',
+  ADD_COMMENT: 'ADD_COMMENT',
 };
 
 const UpdateType = {
@@ -64,7 +63,15 @@ const UpdateType = {
 };
 
 
-const AUTHORIZATION = 'Basic fsdf221q3llpf099';
+const RequestMethod = {
+  GET: 'GET',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  POST: 'POST',
+};
+
+
+const AUTHORIZATION = 'Basic qsdf221q3llpf099';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
-export { AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
+export { RequestMethod, AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};

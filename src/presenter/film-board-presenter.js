@@ -153,16 +153,16 @@ export default class FilmsPresenter {
     });
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = (actionType, updateType, update, commentId) => {
     switch (actionType) {
       case UserAction.UPDATE_CARD:
         this.#cardModel.updateCard(updateType, update);
         break;
-      case UserAction.ADD_CARD:
-        this.#cardModel.addCard(updateType, update);
+      case UserAction.DELETE_COMMENT:
+        this.#commentModel.deleteComment(updateType, update, commentId);
         break;
-      case UserAction.DELETE_CARD:
-        this.#cardModel.deleteCard(updateType, update);
+      case UserAction.ADD_COMMENT:
+        this.#commentModel.addComment(updateType, update);
         break;
     }
   };

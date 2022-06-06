@@ -1,38 +1,32 @@
 import ApiService from '../framework/api-service.js';
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-};
+import { RequestMethod } from '../const.js';
 
 export default class FilmCommentsApiService extends ApiService {
   #filmCards = null;
 
-  getComments = (filmId) =>
-    this._load({url: `comments/${filmId}`})
-      .then(ApiService.parseResponse);
+  getComments = async (filmId) => {
+    const response = await this._load({url: `comments/${filmId}`});
+    return ApiService.parseResponse(response);
+  };
 
-  updateFilmCard = async (filmCard) => {
+
+  deleteComment = async (commentId) => {
     const response = await this._load({
-      url: `movies/${filmCard.id}`,
-      method: Method.PUT,
-      body: JSON.stringify(filmCard),
+      url: `comments/${commentId}`,
+      method: RequestMethod.DELETE,
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
+    return response.status === 200;
   };
 
-  #adaptToServer = (filmComment) => {
-    const adaptedFilmComment = {
-      ...filmComment,
-      comment: filmComment.text,
-    };
+  addComment = async (commentId) => {
+    const response = await this._load({
+      url: `comments/${commentId}`,
+      method: RequestMethod.POST,
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
 
-    delete adaptedFilmComment.text;
-
-    return adaptedFilmComment;
+    return response.status === 200;
   };
 }

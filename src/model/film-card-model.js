@@ -43,26 +43,6 @@ export default class FilmCardModel extends Observable{
     }
   };
 
-  addCard = (updateType, update) => {
-    this.#filmCards = [
-      update,
-      ...this.#filmCards,
-    ];
-
-    this._notify(updateType, update);
-  };
-
-  deleteCard = (updateType, update) => {
-    const index = this.#filmCards.findIndex((filmCard) => filmCard.id === update.id);
-
-    this.#filmCards = [
-      ...this.#filmCards.slice(0, index),
-      ...this.#filmCards.slice(index + 1)
-    ];
-
-    this._notify(updateType, update);
-  };
-
   #adaptToClient = (filmCard) => {
     const adaptedFilmCard = {
       ...filmCard,
