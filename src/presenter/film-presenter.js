@@ -7,18 +7,21 @@ export default class FilmCardPresenter {
   #container = null;
   #changeData = null;
   #removePopups = null;
+  #commentModel = null;
 
   #filmCardComponent = null;
   #filmPopupComponent = null;
 
   #filmCard = null;
+  #filmComments = null;
 
   #popupOpened = false;
 
-  constructor (container, changeData, removePopups) {
+  constructor (container, changeData, removePopups, commentModel) {
     this.#container = container;
     this.#changeData = changeData;
     this.#removePopups = removePopups;
+    this.#commentModel = commentModel;
   }
 
   init = (filmCard) => {
@@ -28,7 +31,7 @@ export default class FilmCardPresenter {
     const prevFilmPopupComponent = this.#filmPopupComponent;
 
     this.#filmCardComponent = new FilmCardView(filmCard);
-    this.#filmPopupComponent = new FilmPopupView(filmCard);
+    this.#filmPopupComponent = new FilmPopupView(filmCard, this.#commentModel);
 
     this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
     this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
@@ -51,42 +54,55 @@ export default class FilmCardPresenter {
       replace(this.#filmPopupComponent, prevFilmPopupComponent);
     }
 
+    if (this.#popupOpened) {
+      this.#filmPopupComponent.renderFilmComments(this.#filmComments);
+    }
+
     remove(prevFilmCardComponent);
     remove(prevFilmPopupComponent);
   };
 
-  #handleCommentDeleteClick = (comments) => {
+  #handleCommentDeleteClick = (targetCommentId) => {
     this.#changeData(
-      UserAction.UPDATE_CARD,
+      UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
-      {...this.#filmPopupComponent.state, comments: [...comments]}
+      {...this.#filmPopupComponent.filmCard, comments: [...this.#filmPopupComponent.filmCard.comments.filter((commentId) => targetCommentId !== commentId)]},
+      {id: targetCommentId}
     );
+    this.#filmComments = this.#filmComments.filter((comment) => comment.id !== targetCommentId);
+    this.#filmPopupComponent.renderFilmComments(this.#filmComments);
   };
 
   #handleCommentAdd = (comments, comment) => {
-    this.#changeData(
-      UserAction.UPDATE_CARD,
-      UpdateType.PATCH,
-      {...this.#filmPopupComponent.state, comments: [...comments, comment]}
-    );
+    //this.#changeData(
+    //  UserAction.UPDATE_CARD,
+    //  UpdateType.PATCH,
+    //  {...this.#filmPopupComponent.state, comments: [...comments, comment]}
+    //);
   };
 
-  #handleFilmCardClick = (cardData) => () => {
+  #handleFilmCardClick = () => () => {
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
-    this.#renderFilmPopup(cardData);
+    //сюда перенести получение комментов
+    this.#renderFilmPopup();
   };
 
   #handleControlClick = (controlType) => {
     this.#changeData(
       UserAction.UPDATE_CARD,
-      this.#popupOpened ? UpdateType.PATCH : UpdateType.MINOR,
-      {...this.#filmPopupComponent.state, userDetails: {...this.#filmPopupComponent.state.userDetails, [controlType]: !this.#filmPopupComponent.state.userDetails[controlType]}}
+      this.#popupOpened ? UpdateType.PATCH : UpdateType.MINOR, // сделать minor и чтобы попап открывался после перерисовки
+      {...this.#filmPopupComponent.filmCard, userDetails: {...this.#filmPopupComponent.filmCard.userDetails, [controlType]: !this.#filmPopupComponent.filmCard.userDetails[controlType]}}
     );
+    if (this.#popupOpened) {
+      this.#filmPopupComponent.renderFilmComments(this.#filmComments);
+    }
   };
 
-  #renderFilmPopup = () => {
+  #renderFilmPopup = async () => {
     this.#removePopups();
+    this.#filmComments = await this.#commentModel.getFilmComments(this.#filmCard.id);
     render(this.#filmPopupComponent, document.querySelector('body'));
+    this.#filmPopupComponent.renderFilmComments(this.#filmComments);
     this.#popupOpened = !this.#popupOpened;
   };
 
