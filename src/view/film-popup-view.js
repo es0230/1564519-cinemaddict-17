@@ -4,7 +4,6 @@ import { render } from '../framework/render.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { EmojiTypes } from '../const.js';
-import { nanoid } from 'nanoid';
 
 dayjs.extend(duration);
 
@@ -260,7 +259,7 @@ export default class FilmPopupView extends AbstractStatefulView{
 
   #commentAddHandler = (evt) => {
     if (evt.ctrlKey && evt.key === 'Enter') {
-      this._callback.commentAdd(this._state.comments, this.#getNewCommentInfo());
+      this._callback.commentAdd(this._state.id, this.#getNewCommentInfo());
     }
   };
 
@@ -278,11 +277,8 @@ export default class FilmPopupView extends AbstractStatefulView{
   };
 
   #getNewCommentInfo = () => ({
-    id: nanoid(),
     text: this._state.newCommentText,
     emotion: this._state.currentEmotion,
-    author: 'lol',
-    date: dayjs(),
   });
 
   #setInnerHandlers = () => {

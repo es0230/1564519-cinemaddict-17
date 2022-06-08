@@ -38,7 +38,7 @@ export default class FilmCardModel extends Observable{
       ];
 
       this._notify(updateType, updatedCard);
-    } catch(err) {
+    } catch (err) {
       throw new Error('Can\'t update film card');
     }
   };

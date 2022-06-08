@@ -48,12 +48,7 @@ export default class FilmsPresenter {
   get filmCards() {
     this.#filterType = this.#filterModel.filterType;
     const filmCards = this.#cardModel.filmCards;
-    const filteredFilmCards = filmCards.filter((el) => {
-      if (this.#filterType === 'filmCards') {
-        return true;
-      }
-      return el.userDetails[this.#filterType];
-    });
+    const filteredFilmCards = this.#filterType === 'filmCards' ? filmCards : filmCards.filter((el) => el.userDetails[this.#filterType]);
 
     switch (this.#currentSortType) {
       case SortType.DATE:
@@ -153,24 +148,24 @@ export default class FilmsPresenter {
     });
   };
 
-  #handleViewAction = (actionType, updateType, update, commentId) => {
+  #handleViewAction = (actionType, updateType, update, requestData) => {
     switch (actionType) {
       case UserAction.UPDATE_CARD:
         this.#cardModel.updateCard(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#commentModel.deleteComment(updateType, update, commentId);
+        this.#commentModel.deleteComment(updateType, update, requestData);
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentModel.addComment(updateType, update);
+        this.#commentModel.addComment(updateType, requestData);
         break;
     }
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = (updateType, updateData) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#filmBoardPresenter.get(data.id).init(data);
+        this.#filmBoardPresenter.get(updateData.id).init(updateData);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();

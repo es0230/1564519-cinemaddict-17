@@ -71,7 +71,7 @@ const RequestMethod = {
 };
 
 
-const AUTHORIZATION = 'Basic qsdf221q3llpf099';
+const AUTHORIZATION = 'Basic qsdf261q3llpf099';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
 export { RequestMethod, AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};

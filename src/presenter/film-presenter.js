@@ -26,7 +26,6 @@ export default class FilmCardPresenter {
 
   init = (filmCard) => {
     this.#filmCard = filmCard;
-
     const prevFilmCardComponent = this.#filmCardComponent;
     const prevFilmPopupComponent = this.#filmPopupComponent;
 
@@ -55,7 +54,7 @@ export default class FilmCardPresenter {
     }
 
     if (this.#popupOpened) {
-      this.#filmPopupComponent.renderFilmComments(this.#filmComments);
+      this.#filmPopupComponent.renderFilmComments(this.#commentModel.lastRequestedFilmComments);
     }
 
     remove(prevFilmCardComponent);
@@ -67,23 +66,23 @@ export default class FilmCardPresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
       {...this.#filmPopupComponent.filmCard, comments: [...this.#filmPopupComponent.filmCard.comments.filter((commentId) => targetCommentId !== commentId)]},
-      {id: targetCommentId}
+      {id: targetCommentId},
     );
     this.#filmComments = this.#filmComments.filter((comment) => comment.id !== targetCommentId);
     this.#filmPopupComponent.renderFilmComments(this.#filmComments);
   };
 
-  #handleCommentAdd = (comments, comment) => {
-    //this.#changeData(
-    //  UserAction.UPDATE_CARD,
-    //  UpdateType.PATCH,
-    //  {...this.#filmPopupComponent.state, comments: [...comments, comment]}
-    //);
+  #handleCommentAdd = (filmCardId, comment) => {
+    this.#changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      {},
+      {filmId: filmCardId, comment: comment,}
+    );
   };
 
   #handleFilmCardClick = () => () => {
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
-    //сюда перенести получение комментов
     this.#renderFilmPopup();
   };
 

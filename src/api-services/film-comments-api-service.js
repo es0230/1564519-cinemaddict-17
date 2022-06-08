@@ -20,13 +20,27 @@ export default class FilmCommentsApiService extends ApiService {
     return response.status === 200;
   };
 
-  addComment = async (commentId) => {
+  addComment = async (filmId, localComment) => {
     const response = await this._load({
-      url: `comments/${commentId}`,
+      url: `comments/${filmId}`,
       method: RequestMethod.POST,
+      body: JSON.stringify(this.#adaptToServer(localComment)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
-    return response.status === 200;
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  };
+
+  #adaptToServer = (comment) => {
+    const adaptedComment = {
+      ...comment,
+      'comment': comment.text,
+    };
+
+    delete adaptedComment.text;
+
+    return adaptedComment;
   };
 }
