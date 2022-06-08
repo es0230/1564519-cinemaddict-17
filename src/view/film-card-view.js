@@ -18,10 +18,10 @@ const createFilmCardTemplate = (filmCard) => {
       <p class="film-card__info">
         <span class="film-card__year">${dayjs(release.date).format('YYYY')}</span>
         <span class="film-card__duration">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [min]')}</span>
-        <span class="film-card__genre">${genre}</span>
+        <span class="film-card__genre">${genre.join(', ')}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${description}</p>
+      <p class="film-card__description">${description.length > 140 ? description.slice(0, 140).concat('...') : description}</p>
       <span class="film-card__comments">${comments.length} comment${comments.length !== 1 ? 's' : ''}</span>
     </a>
     <div class="film-card__controls">
