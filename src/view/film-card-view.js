@@ -17,7 +17,7 @@ const createFilmCardTemplate = (filmCard) => {
       <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${dayjs(release.date).format('YYYY')}</span>
-        <span class="film-card__duration">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [min]')}</span>
+        <span class="film-card__duration">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [m]')}</span>
         <span class="film-card__genre">${genre.join(', ')}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">

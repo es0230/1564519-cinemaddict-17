@@ -62,11 +62,11 @@ const createFilmPopupTemplate = (filmCardState) => {
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Writers</td>
-                        <td class="film-details__cell">${writers}</td>
+                        <td class="film-details__cell">${writers.join(', ')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Actors</td>
-                        <td class="film-details__cell">${actors[0]}, ${actors[1]}, ${actors[2]}</td>
+                        <td class="film-details__cell">${actors.join(', ')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Release Date</td>
@@ -74,16 +74,16 @@ const createFilmPopupTemplate = (filmCardState) => {
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Runtime</td>
-                        <td class="film-details__cell">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [min]')}</td>
+                        <td class="film-details__cell">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [m]')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Country</td>
                         <td class="film-details__cell">USA</td>
                       </tr>
                       <tr class="film-details__row">
-                        <td class="film-details__term">Genres</td>
+                        <td class="film-details__term">${genre.length === 1 ? 'Genre' : 'Genres'}</td>
                         <td class="film-details__cell">
-                          <span class="film-details__genre">${genre}</span>
+                          <span class="film-details__genre">${genre.join(', ')}</span>
                         </td>
                       </tr>
                     </table>
