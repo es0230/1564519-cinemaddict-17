@@ -103,7 +103,7 @@ export default class FilmsPresenter {
     this.#sortSection = new SortView(this.#currentSortType);
     this.#sortSection.setClickHandler(this.#handleSortClick);
     if (prevSortSection === null) {
-      render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
+      render(this.#sortSection, document.querySelector('.main-navigation'), RenderPosition.AFTEREND);
       return;
     }
 
