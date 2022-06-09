@@ -58,9 +58,9 @@ export default class FilmsPresenter {
 
     switch (this.#currentSortType) {
       case SortType.DATE:
-        return filteredFilmCards.sort((a, b) => dayjs(a.filmInfo.release[this.#currentSortType]).isBefore(dayjs(b.filmInfo.release[this.#currentSortType])) ? 1 : -1);
+        return filteredFilmCards.slice().sort((a, b) => dayjs(a.filmInfo.release[this.#currentSortType]).isBefore(dayjs(b.filmInfo.release[this.#currentSortType])) ? 1 : -1);
       case SortType.RATING:
-        return filteredFilmCards.sort((a, b) => b.filmInfo[this.#currentSortType] - a.filmInfo[this.#currentSortType]);
+        return filteredFilmCards.slice().sort((a, b) => b.filmInfo[this.#currentSortType] - a.filmInfo[this.#currentSortType]);
     }
     return filteredFilmCards;
   }
