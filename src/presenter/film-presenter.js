@@ -24,6 +24,10 @@ export default class FilmCardPresenter {
     this.#commentModel = commentModel;
   }
 
+  get filmPopupComponent () {
+    return this.#filmPopupComponent;
+  }
+
   init = (filmCard) => {
     this.#filmCard = filmCard;
     const prevFilmCardComponent = this.#filmCardComponent;
@@ -78,7 +82,7 @@ export default class FilmCardPresenter {
     this.#filmPopupComponent.renderFilmComments(this.#filmComments);
   };
 
-  setAborting = (targetCommentId) => {
+  setCommentDeleteAborting = (targetCommentId) => {
     const targetCommentComponent = this.#filmPopupComponent.state.commentViewList.find((commentView) => commentView.state.id === targetCommentId.id);
     const resetCommentState = () => {
       targetCommentComponent.updateElement({
@@ -91,12 +95,26 @@ export default class FilmCardPresenter {
   };
 
   #handleCommentAdd = (filmCardId, comment) => {
+    this.#filmPopupComponent.updateElement({
+      isCommentAdding: true,
+    });
+    this.#filmPopupComponent.renderFilmComments(this.#filmComments);
     this.#changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
       {},
       {filmId: filmCardId, comment: comment,}
     );
+  };
+
+  setCommentAddAborting = () => {
+    const resetCommentState = () => {
+      this.#filmPopupComponent.updateElement({
+        isCommentAdding: false,
+      });
+      this.#filmPopupComponent.renderFilmComments(this.#filmComments);
+    };
+    this.#filmPopupComponent.shakeOnAdd(resetCommentState);
   };
 
   #handleFilmCardClick = () => () => {
@@ -107,7 +125,7 @@ export default class FilmCardPresenter {
   #handleControlClick = (controlType) => {
     this.#changeData(
       UserAction.UPDATE_CARD,
-      this.#popupOpened ? UpdateType.PATCH : UpdateType.MINOR, // сделать minor и чтобы попап открывался после перерисовки
+      this.#popupOpened ? UpdateType.PATCH : UpdateType.MINOR,
       {...this.#filmPopupComponent.filmCard, userDetails: {...this.#filmPopupComponent.filmCard.userDetails, [controlType]: !this.#filmPopupComponent.filmCard.userDetails[controlType]}}
     );
     if (this.#popupOpened) {

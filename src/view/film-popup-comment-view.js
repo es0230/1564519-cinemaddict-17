@@ -41,13 +41,6 @@ export default class FilmCommentView extends AbstractStatefulView {
     isDeleting: false,
   });
 
-  static parseStateToComment = (state) => {
-    const comment = {...state};
-
-    delete comment.isDeleteButtonDisabled;
-    delete comment.isDeleting;
-  };
-
   _restoreHandlers = () => {
 
   };

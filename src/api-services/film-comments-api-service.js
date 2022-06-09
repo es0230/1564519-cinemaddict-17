@@ -9,7 +9,6 @@ export default class FilmCommentsApiService extends ApiService {
     return ApiService.parseResponse(response);
   };
 
-
   deleteComment = async (commentId) => {
     const response = await this._load({
       url: `comments/${commentId}`,

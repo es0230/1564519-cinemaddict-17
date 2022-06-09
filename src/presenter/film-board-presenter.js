@@ -156,13 +156,18 @@ export default class FilmsPresenter {
       case UserAction.DELETE_COMMENT:
         try {
           await this.#commentModel.deleteComment(updateType, update, requestData);
-        } catch(err) {
-          this.#filmBoardPresenter.get(update.id).setAborting(requestData);
+        } catch (err) {
+          this.#filmBoardPresenter.get(update.id).setCommentDeleteAborting(requestData);
         }
-
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentModel.addComment(updateType, requestData);
+        try {
+          await this.#commentModel.addComment(updateType, requestData);
+        } catch (err) {
+          const filmPopup = this.#filmBoardPresenter.get(requestData.filmId).filmPopupComponent;
+          filmPopup.renderFilmComments(filmPopup.state.comments);
+          this.#filmBoardPresenter.get(requestData.filmId).setCommentAddAborting();
+        }
         break;
     }
   };

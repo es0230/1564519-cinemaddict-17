@@ -7,6 +7,9 @@ import { EmojiTypes } from '../const.js';
 
 dayjs.extend(duration);
 
+const SHAKE_CLASS_NAME = 'shake';
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const ACTIVE_CONTROL_BUTTON_CLASS = 'film-details__control-button--active';
 
 const WATCHLIST_CONTROL_BUTTON_TEXT = {
@@ -26,9 +29,8 @@ const FAVORITE_CONTROL_BUTTON_TEXT = {
 
 const createFilmPopupTemplate = (filmCardState) => {
   const {title, originalTitle, totalRating, poster, ageRating, director, writers, actors, release, runtime, genre, description} = filmCardState.filmInfo;
-  const commentIds = filmCardState.commentIds;
   const {watchlist, watched, favorite} = filmCardState.userDetails;
-  const {currentEmotion, newCommentText} = filmCardState;
+  const {currentEmotion, newCommentText, commentIds, isCommentAdding} = filmCardState;
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
@@ -115,7 +117,7 @@ const createFilmPopupTemplate = (filmCardState) => {
                     </div>
 
                     <label class="film-details__comment-label">
-                      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newCommentText !== null ? newCommentText : ''}</textarea>
+                      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isCommentAdding ? 'disabled' : ''}>${newCommentText !== null ? newCommentText : ''}</textarea>
                     </label>
 
                     <div class="film-details__emoji-list">
@@ -176,6 +178,7 @@ export default class FilmPopupView extends AbstractStatefulView{
     commentViewList: null,
     commentIds: filmCard.comments,
     comments: null,
+    isCommentAdding: false,
   });
 
   static parseStateToCard = (filmCardState) => { // при закрытии
@@ -186,6 +189,7 @@ export default class FilmPopupView extends AbstractStatefulView{
     delete filmCard.newCommentText;
     delete filmCard.commentViewList;
     delete filmCard.commentIds;
+    delete filmCard.isCommentAdding;
 
     return filmCard;
   };
@@ -299,4 +303,12 @@ export default class FilmPopupView extends AbstractStatefulView{
     this.setCloseClickHandler(this._callback.closeClick);
     this.setControlButtonClickHandler(this._callback.controlButtonClick);
   };
+
+  shakeOnAdd(callback) {
+    this.element.querySelector('.film-details__new-comment').classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      this.element.querySelector('.film-details__new-comment').classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
 }
