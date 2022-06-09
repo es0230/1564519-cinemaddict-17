@@ -148,13 +148,18 @@ export default class FilmsPresenter {
     });
   };
 
-  #handleViewAction = (actionType, updateType, update, requestData) => {
+  #handleViewAction = async (actionType, updateType, update, requestData) => {
     switch (actionType) {
       case UserAction.UPDATE_CARD:
         this.#cardModel.updateCard(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#commentModel.deleteComment(updateType, update, requestData);
+        try {
+          await this.#commentModel.deleteComment(updateType, update, requestData);
+        } catch(err) {
+          this.#filmBoardPresenter.get(update.id).setAborting(requestData);
+        }
+
         break;
       case UserAction.ADD_COMMENT:
         this.#commentModel.addComment(updateType, requestData);

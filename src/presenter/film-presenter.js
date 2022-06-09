@@ -62,6 +62,12 @@ export default class FilmCardPresenter {
   };
 
   #handleCommentDeleteClick = (targetCommentId) => {
+    const targetCommentComponent = this.#filmPopupComponent.state.commentViewList.find((commentView) => commentView.state.id === targetCommentId);
+    targetCommentComponent.updateElement({
+      isDeleteButtonDisabled: true,
+      isDeleting: true,
+    });
+
     this.#changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
@@ -70,6 +76,18 @@ export default class FilmCardPresenter {
     );
     this.#filmComments = this.#filmComments.filter((comment) => comment.id !== targetCommentId);
     this.#filmPopupComponent.renderFilmComments(this.#filmComments);
+  };
+
+  setAborting = (targetCommentId) => {
+    const targetCommentComponent = this.#filmPopupComponent.state.commentViewList.find((commentView) => commentView.state.id === targetCommentId.id);
+    const resetCommentState = () => {
+      targetCommentComponent.updateElement({
+        isDeleteButtonDisabled: false,
+        isDeleting: false,
+      });
+    };
+
+    targetCommentComponent.shake(resetCommentState);
   };
 
   #handleCommentAdd = (filmCardId, comment) => {

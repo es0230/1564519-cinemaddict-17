@@ -162,6 +162,10 @@ export default class FilmPopupView extends AbstractStatefulView{
     return createFilmPopupTemplate(this._state);
   }
 
+  get state() {
+    return this._state;
+  }
+
   get filmCard() {
     return FilmPopupView.parseStateToCard(this._state);
   }
@@ -169,7 +173,7 @@ export default class FilmPopupView extends AbstractStatefulView{
   static parseCardToState = (filmCard) => ({...filmCard,
     currentEmotion: null,
     newCommentText: null,
-    commentList: null,
+    commentViewList: null,
     commentIds: filmCard.comments,
     comments: null,
   });
@@ -180,7 +184,7 @@ export default class FilmPopupView extends AbstractStatefulView{
 
     delete filmCard.currentEmotion;
     delete filmCard.newCommentText;
-    delete filmCard.commentList;
+    delete filmCard.commentViewList;
     delete filmCard.commentIds;
 
     return filmCard;
@@ -192,10 +196,10 @@ export default class FilmPopupView extends AbstractStatefulView{
 
   renderFilmComments (comments) {
     this._state.comments = comments;
-    if (this._state.commentList === null) {
-      this._state.commentList = Array.from({length: this._state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
+    if (this._state.commentViewList === null) {
+      this._state.commentViewList = Array.from({length: this._state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
     }
-    this._state.commentList.forEach((comment) => this.#renderFilmComment(comment));
+    this._state.commentViewList.forEach((comment) => this.#renderFilmComment(comment));
   }
 
   #commentInputHandler = (evt) => {
