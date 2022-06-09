@@ -3,12 +3,9 @@ import FilmCommentView from '../view/film-popup-comment-view.js';
 import { render } from '../framework/render.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { EmojiTypes } from '../const.js';
+import { EmojiTypes, SHAKE_CLASS_NAME, SHAKE_ANIMATION_TIMEOUT } from '../const.js';
 
 dayjs.extend(duration);
-
-const SHAKE_CLASS_NAME = 'shake';
-const SHAKE_ANIMATION_TIMEOUT = 600;
 
 const ACTIVE_CONTROL_BUTTON_CLASS = 'film-details__control-button--active';
 
@@ -308,6 +305,14 @@ export default class FilmPopupView extends AbstractStatefulView{
     this.element.querySelector('.film-details__new-comment').classList.add(SHAKE_CLASS_NAME);
     setTimeout(() => {
       this.element.querySelector('.film-details__new-comment').classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeOnControlToggle(callback, targetType) {
+    this.element.querySelector(`[data-control-type="${targetType}"]`).classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      this.element.querySelector(`[data-control-type="${targetType}"]`).classList.remove(SHAKE_CLASS_NAME);
       callback?.();
     }, SHAKE_ANIMATION_TIMEOUT);
   }

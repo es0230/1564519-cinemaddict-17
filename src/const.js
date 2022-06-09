@@ -70,8 +70,10 @@ const RequestMethod = {
   POST: 'POST',
 };
 
+const SHAKE_CLASS_NAME = 'shake';
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 const AUTHORIZATION = 'Basic qsdf261q3llpf099';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
-export { RequestMethod, AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};
+export { SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME, RequestMethod, AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType, MOCKTEXT, COMMENT_EMOTIONS, FIRST_NAMES, LAST_NAMES};

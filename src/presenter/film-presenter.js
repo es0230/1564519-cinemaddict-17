@@ -123,13 +123,31 @@ export default class FilmCardPresenter {
   };
 
   #handleControlClick = (controlType) => {
+    this.#filmCardComponent.element.querySelectorAll('.film-card__controls-item').forEach((button) => {button.disabled = true;});
+    this.#filmPopupComponent.element.querySelectorAll('.film-details__control-button').forEach((button) => {button.diabled = true;});
+
     this.#changeData(
       UserAction.UPDATE_CARD,
       this.#popupOpened ? UpdateType.PATCH : UpdateType.MINOR,
-      {...this.#filmPopupComponent.filmCard, userDetails: {...this.#filmPopupComponent.filmCard.userDetails, [controlType]: !this.#filmPopupComponent.filmCard.userDetails[controlType]}}
+      {...this.#filmPopupComponent.filmCard, userDetails: {...this.#filmPopupComponent.filmCard.userDetails, [controlType]: !this.#filmPopupComponent.filmCard.userDetails[controlType]}},
+      controlType,
     );
+
     if (this.#popupOpened) {
       this.#filmPopupComponent.renderFilmComments(this.#filmComments);
+    }
+  };
+
+  setControlToggleAborting = (controlType) => {
+    const enableControlButtons = () => {
+      this.#filmCardComponent.element.querySelectorAll('.film-card__controls-item').forEach((button) => {button.disabled = false;});
+      this.#filmPopupComponent.element.querySelectorAll('.film-details__control-button').forEach((button) => {button.diabled = false;});
+    };
+
+    if (this.#popupOpened) {
+      this.#filmPopupComponent.shakeOnControlToggle(enableControlButtons, controlType);
+    } else {
+      this.#filmCardComponent.shake(enableControlButtons, controlType);
     }
   };
 
@@ -141,12 +159,8 @@ export default class FilmCardPresenter {
     this.#popupOpened = !this.#popupOpened;
   };
 
-  #handlePopupClosing = (filmCardDataChanges) => {
-    this.#changeData(
-      UserAction.UPDATE_CARD,
-      UpdateType.MINOR,
-      {...this.#filmCard, ...filmCardDataChanges}
-    );
+  #handlePopupClosing = () => {
+    this.#filmPopupComponent.element.remove();
     this.#popupOpened = !this.#popupOpened;
   };
 

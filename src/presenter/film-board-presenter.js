@@ -148,25 +148,29 @@ export default class FilmsPresenter {
     });
   };
 
-  #handleViewAction = async (actionType, updateType, update, requestData) => {
+  #handleViewAction = async (actionType, updateType, update, additionalData) => {
     switch (actionType) {
       case UserAction.UPDATE_CARD:
-        this.#cardModel.updateCard(updateType, update);
+        try {
+          await this.#cardModel.updateCard(updateType, update);
+        } catch (err) {
+          this.#filmBoardPresenter.get(update.id).setControlToggleAborting(additionalData);
+        }
         break;
       case UserAction.DELETE_COMMENT:
         try {
-          await this.#commentModel.deleteComment(updateType, update, requestData);
+          await this.#commentModel.deleteComment(updateType, update, additionalData);
         } catch (err) {
-          this.#filmBoardPresenter.get(update.id).setCommentDeleteAborting(requestData);
+          this.#filmBoardPresenter.get(update.id).setCommentDeleteAborting(additionalData);
         }
         break;
       case UserAction.ADD_COMMENT:
         try {
-          await this.#commentModel.addComment(updateType, requestData);
+          await this.#commentModel.addComment(updateType, additionalData);
         } catch (err) {
-          const filmPopup = this.#filmBoardPresenter.get(requestData.filmId).filmPopupComponent;
+          const filmPopup = this.#filmBoardPresenter.get(additionalData.filmId).filmPopupComponent;
           filmPopup.renderFilmComments(filmPopup.state.comments);
-          this.#filmBoardPresenter.get(requestData.filmId).setCommentAddAborting();
+          this.#filmBoardPresenter.get(additionalData.filmId).setCommentAddAborting();
         }
         break;
     }
