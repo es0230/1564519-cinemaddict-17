@@ -6,12 +6,17 @@ import SortView from '../view/sort-view.js';
 import FilmCardPresenter from './film-presenter.js';
 import FooterView from '../view/footer-view.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import dayjs from 'dayjs';
 import { render, remove, RenderPosition, replace } from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
 const DEFAULT_SORT_TYPE = 'default';
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class FilmsPresenter {
   #container = null;
@@ -33,6 +38,7 @@ export default class FilmsPresenter {
   #renderedFilmCardsCount = FILM_CARDS_COUNT_PER_STEP;
   #filmBoardPresenter = new Map();
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(targetContainer, filmCardModel, filmCommentModel, filterModel) {
     this.#container = targetContainer;
@@ -149,6 +155,8 @@ export default class FilmsPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update, additionalData) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_CARD:
         try {
@@ -174,6 +182,8 @@ export default class FilmsPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, updateData) => {
