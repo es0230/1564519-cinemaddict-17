@@ -16,6 +16,7 @@ export default class FilmCardPresenter {
   #filmComments = null;
 
   #popupOpened = false;
+  #lastPopupScrollPosition = null;
 
   constructor (container, changeData, removePopups, commentModel) {
     this.#container = container;
@@ -34,15 +35,15 @@ export default class FilmCardPresenter {
     const prevFilmPopupComponent = this.#filmPopupComponent;
 
     this.#filmCardComponent = new FilmCardView(filmCard);
-    this.#filmPopupComponent = new FilmPopupView(filmCard, this.#commentModel);
+    this.#filmPopupComponent = new FilmPopupView(filmCard, this.#commentModel, this.restoreScrollPosition);
 
     this.#filmCardComponent.setCardClickHandler(this.#handleFilmCardClick(this.#filmCardComponent.filmCard));
     this.#filmCardComponent.setControlClickHandler(this.#handleControlClick);
 
-    this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
     this.#filmPopupComponent.setControlButtonClickHandler(this.#handleControlClick);
     this.#filmPopupComponent.setCommentDeleteButtonClickHandler(this.#handleCommentDeleteClick);
     this.#filmPopupComponent.setCommentAddHandler(this.#handleCommentAdd);
+    this.#filmPopupComponent.setScrollHandler(this.#handlePopupScrolling);
 
     if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
       render(this.#filmCardComponent, this.#container);
@@ -59,10 +60,15 @@ export default class FilmCardPresenter {
 
     if (this.#popupOpened) {
       this.#filmPopupComponent.renderFilmComments(this.#commentModel.lastRequestedFilmComments);
+      this.restoreScrollPosition();
     }
 
     remove(prevFilmCardComponent);
     remove(prevFilmPopupComponent);
+  };
+
+  restoreScrollPosition = () => {
+    this.#filmPopupComponent.element.scrollTo(0, this.#lastPopupScrollPosition);
   };
 
   #handleCommentDeleteClick = (targetCommentId) => {
@@ -105,6 +111,7 @@ export default class FilmCardPresenter {
       {},
       {filmId: filmCardId, comment: comment,}
     );
+    this.#filmPopupComponent.element.scrollTo(0, this.#lastPopupScrollPosition);
   };
 
   setCommentAddAborting = () => {
@@ -113,13 +120,20 @@ export default class FilmCardPresenter {
         isCommentAdding: false,
       });
       this.#filmPopupComponent.renderFilmComments(this.#filmComments);
+      this.#filmPopupComponent.element.scrollTo(0, this.#lastPopupScrollPosition);
     };
     this.#filmPopupComponent.shakeOnAdd(resetCommentState);
   };
 
   #handleFilmCardClick = () => () => {
     this.#filmPopupComponent.setEscKeyDownHandler(this.#handlePopupClosing);
+    this.#filmPopupComponent.setCloseClickHandler(this.#handlePopupClosing);
+    this.#filmPopupComponent.setScrollHandler(this.#handlePopupScrolling);
     this.#renderFilmPopup();
+  };
+
+  #handlePopupScrolling = (scrollPosition) => {
+    this.#lastPopupScrollPosition = scrollPosition;
   };
 
   #handleControlClick = (controlType) => {
@@ -134,6 +148,7 @@ export default class FilmCardPresenter {
     );
 
     if (this.#popupOpened) {
+      this.#filmPopupComponent.scrollTop = this.#lastPopupScrollPosition;
       this.#filmPopupComponent.renderFilmComments(this.#filmComments);
     }
   };
@@ -162,6 +177,7 @@ export default class FilmCardPresenter {
   #handlePopupClosing = () => {
     this.#filmPopupComponent.element.remove();
     this.#popupOpened = !this.#popupOpened;
+    this.#lastPopupScrollPosition = 0;
   };
 
   removePopup = () => {

@@ -148,11 +148,13 @@ const createFilmPopupTemplate = (filmCardState) => {
 export default class FilmPopupView extends AbstractStatefulView{
   _state = null;
   #commentModel = null;
+  #restoreScrollPosition = null;
 
-  constructor (filmCard, commentModel) {
+  constructor (filmCard, commentModel, scrollPositionRestorer) {
     super();
     this._state = FilmPopupView.parseCardToState(filmCard);
     this.#commentModel = commentModel;
+    this.#restoreScrollPosition = scrollPositionRestorer;
 
     this.#setInnerHandlers();
   }
@@ -218,6 +220,7 @@ export default class FilmPopupView extends AbstractStatefulView{
         currentEmotion: clickedEmojiType
       });
       this.renderFilmComments(this._state.comments);
+      this.#restoreScrollPosition();
     }
   };
 
@@ -286,6 +289,16 @@ export default class FilmPopupView extends AbstractStatefulView{
     emotion: this._state.currentEmotion,
   });
 
+  setScrollHandler = (callback) => {
+    this._callback.popupScroll = callback;
+    this.element.addEventListener('scroll', this.#popupScrollHandler);
+  };
+
+  #popupScrollHandler = (evt) => {
+    const scrollPosition = evt.target.scrollTop;
+    this._callback.popupScroll(scrollPosition);
+  };
+
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__emoji-list')
       .addEventListener('click', this.#emojiClickHandler);
@@ -293,6 +306,8 @@ export default class FilmPopupView extends AbstractStatefulView{
       .addEventListener('input', this.#commentInputHandler);
     this.element.querySelector('.film-details__comment-input')
       .addEventListener('keydown', this.#commentAddHandler);
+    this.element
+      .addEventListener('scroll', this.#popupScrollHandler);
   };
 
   _restoreHandlers = () => {

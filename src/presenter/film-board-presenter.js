@@ -178,6 +178,7 @@ export default class FilmsPresenter {
         } catch (err) {
           const filmPopup = this.#filmBoardPresenter.get(additionalData.filmId).filmPopupComponent;
           filmPopup.renderFilmComments(filmPopup.state.comments);
+          //this.#filmBoardPresenter.get(additionalData.filmId).restoreScrollPosition();
           this.#filmBoardPresenter.get(additionalData.filmId).setCommentAddAborting();
         }
         break;
