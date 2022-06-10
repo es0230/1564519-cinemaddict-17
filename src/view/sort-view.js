@@ -5,9 +5,9 @@ const ACTIVE_SORT_BUTTON_CLASS = 'sort__button--active';
 
 const createSortTemplate = (currentSortType) => (
   `<ul class="sort">
-    <li><a href="#" data-sort-type="${SortType.DEFAULT}" class="sort__button ${currentSortType === SortType.DEFAULT ? 'sort__button--active'  : ''}">Sort by default</a></li>
-    <li><a href="#" data-sort-type="${SortType.DATE}" class="sort__button ${currentSortType === SortType.DATE ? 'sort__button--active'  : ''}">Sort by date</a></li>
-    <li><a href="#" data-sort-type="${SortType.RATING}" class="sort__button ${currentSortType === SortType.RATING ? 'sort__button--active'  : ''}">Sort by rating</a></li>
+    <li><a href="#" data-sort-type="${SortType.DEFAULT}" class="sort__button ${currentSortType === SortType.DEFAULT ? ACTIVE_SORT_BUTTON_CLASS  : ''}">Sort by default</a></li>
+    <li><a href="#" data-sort-type="${SortType.DATE}" class="sort__button ${currentSortType === SortType.DATE ? ACTIVE_SORT_BUTTON_CLASS  : ''}">Sort by date</a></li>
+    <li><a href="#" data-sort-type="${SortType.RATING}" class="sort__button ${currentSortType === SortType.RATING ? ACTIVE_SORT_BUTTON_CLASS  : ''}">Sort by rating</a></li>
   </ul>`
 );
 

@@ -3,8 +3,7 @@ import FilmCommentView from '../view/film-popup-comment-view.js';
 import { render } from '../framework/render.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { EmojiTypes } from '../const.js';
-import { nanoid } from 'nanoid';
+import { EmojiTypes, SHAKE_CLASS_NAME, SHAKE_ANIMATION_TIMEOUT } from '../const.js';
 
 dayjs.extend(duration);
 
@@ -27,9 +26,8 @@ const FAVORITE_CONTROL_BUTTON_TEXT = {
 
 const createFilmPopupTemplate = (filmCardState) => {
   const {title, originalTitle, totalRating, poster, ageRating, director, writers, actors, release, runtime, genre, description} = filmCardState.filmInfo;
-  const commentIds = filmCardState.commentIds;
   const {watchlist, watched, favorite} = filmCardState.userDetails;
-  const {currentEmotion, newCommentText} = filmCardState;
+  const {currentEmotion, newCommentText, commentIds, isCommentAdding} = filmCardState;
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
@@ -63,11 +61,11 @@ const createFilmPopupTemplate = (filmCardState) => {
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Writers</td>
-                        <td class="film-details__cell">${writers}</td>
+                        <td class="film-details__cell">${writers.join(', ')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Actors</td>
-                        <td class="film-details__cell">${actors[0]}, ${actors[1]}, ${actors[2]}</td>
+                        <td class="film-details__cell">${actors.join(', ')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Release Date</td>
@@ -75,16 +73,16 @@ const createFilmPopupTemplate = (filmCardState) => {
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Runtime</td>
-                        <td class="film-details__cell">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [min]')}</td>
+                        <td class="film-details__cell">${dayjs.duration({hours: Math.floor(runtime / 60), minutes: runtime % 60}).format('H [h] m [m]')}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Country</td>
                         <td class="film-details__cell">USA</td>
                       </tr>
                       <tr class="film-details__row">
-                        <td class="film-details__term">Genres</td>
+                        <td class="film-details__term">${genre.length === 1 ? 'Genre' : 'Genres'}</td>
                         <td class="film-details__cell">
-                          <span class="film-details__genre">${genre}</span>
+                          <span class="film-details__genre">${genre.join(', ')}</span>
                         </td>
                       </tr>
                     </table>
@@ -116,7 +114,7 @@ const createFilmPopupTemplate = (filmCardState) => {
                     </div>
 
                     <label class="film-details__comment-label">
-                      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newCommentText !== null ? newCommentText : ''}</textarea>
+                      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isCommentAdding ? 'disabled' : ''}>${newCommentText !== null ? newCommentText : ''}</textarea>
                     </label>
 
                     <div class="film-details__emoji-list">
@@ -150,17 +148,23 @@ const createFilmPopupTemplate = (filmCardState) => {
 export default class FilmPopupView extends AbstractStatefulView{
   _state = null;
   #commentModel = null;
+  #restoreScrollPosition = null;
 
-  constructor (filmCard, commentModel) {
+  constructor (filmCard, commentModel, scrollPositionRestorer) {
     super();
     this._state = FilmPopupView.parseCardToState(filmCard);
     this.#commentModel = commentModel;
+    this.#restoreScrollPosition = scrollPositionRestorer;
 
     this.#setInnerHandlers();
   }
 
   get template() {
     return createFilmPopupTemplate(this._state);
+  }
+
+  get state() {
+    return this._state;
   }
 
   get filmCard() {
@@ -170,19 +174,21 @@ export default class FilmPopupView extends AbstractStatefulView{
   static parseCardToState = (filmCard) => ({...filmCard,
     currentEmotion: null,
     newCommentText: null,
-    commentList: null,
+    commentViewList: null,
     commentIds: filmCard.comments,
     comments: null,
+    isCommentAdding: false,
   });
 
-  static parseStateToCard = (filmCardState) => { // при закрытии
+  static parseStateToCard = (filmCardState) => {
     const filmCard = {...filmCardState};
     filmCard.comments = filmCardState.commentIds;
 
     delete filmCard.currentEmotion;
     delete filmCard.newCommentText;
-    delete filmCard.commentList;
+    delete filmCard.commentViewList;
     delete filmCard.commentIds;
+    delete filmCard.isCommentAdding;
 
     return filmCard;
   };
@@ -193,10 +199,10 @@ export default class FilmPopupView extends AbstractStatefulView{
 
   renderFilmComments (comments) {
     this._state.comments = comments;
-    if (this._state.commentList === null) {
-      this._state.commentList = Array.from({length: this._state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
+    if (this._state.commentViewList === null) {
+      this._state.commentViewList = Array.from({length: this._state.comments.length}, (el, i) => new FilmCommentView(this._state.comments[i]));
     }
-    this._state.commentList.forEach((comment) => this.#renderFilmComment(comment));
+    this._state.commentViewList.forEach((comment) => this.#renderFilmComment(comment));
   }
 
   #commentInputHandler = (evt) => {
@@ -214,6 +220,7 @@ export default class FilmPopupView extends AbstractStatefulView{
         currentEmotion: clickedEmojiType
       });
       this.renderFilmComments(this._state.comments);
+      this.#restoreScrollPosition();
     }
   };
 
@@ -260,7 +267,7 @@ export default class FilmPopupView extends AbstractStatefulView{
 
   #commentAddHandler = (evt) => {
     if (evt.ctrlKey && evt.key === 'Enter') {
-      this._callback.commentAdd(this._state.comments, this.#getNewCommentInfo());
+      this._callback.commentAdd(this._state.id, this.#getNewCommentInfo());
     }
   };
 
@@ -278,12 +285,19 @@ export default class FilmPopupView extends AbstractStatefulView{
   };
 
   #getNewCommentInfo = () => ({
-    id: nanoid(),
     text: this._state.newCommentText,
     emotion: this._state.currentEmotion,
-    author: 'lol',
-    date: dayjs(),
   });
+
+  setScrollHandler = (callback) => {
+    this._callback.popupScroll = callback;
+    this.element.addEventListener('scroll', this.#popupScrollHandler);
+  };
+
+  #popupScrollHandler = (evt) => {
+    const scrollPosition = evt.target.scrollTop;
+    this._callback.popupScroll(scrollPosition);
+  };
 
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__emoji-list')
@@ -292,6 +306,8 @@ export default class FilmPopupView extends AbstractStatefulView{
       .addEventListener('input', this.#commentInputHandler);
     this.element.querySelector('.film-details__comment-input')
       .addEventListener('keydown', this.#commentAddHandler);
+    this.element
+      .addEventListener('scroll', this.#popupScrollHandler);
   };
 
   _restoreHandlers = () => {
@@ -299,4 +315,20 @@ export default class FilmPopupView extends AbstractStatefulView{
     this.setCloseClickHandler(this._callback.closeClick);
     this.setControlButtonClickHandler(this._callback.controlButtonClick);
   };
+
+  shakeOnAdd(callback) {
+    this.element.querySelector('.film-details__new-comment').classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      this.element.querySelector('.film-details__new-comment').classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeOnControlToggle(callback, targetType) {
+    this.element.querySelector(`[data-control-type="${targetType}"]`).classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      this.element.querySelector(`[data-control-type="${targetType}"]`).classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
 }

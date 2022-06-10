@@ -6,12 +6,17 @@ import SortView from '../view/sort-view.js';
 import FilmCardPresenter from './film-presenter.js';
 import FooterView from '../view/footer-view.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import dayjs from 'dayjs';
 import { render, remove, RenderPosition, replace } from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 
 const FILM_CARDS_COUNT_PER_STEP = 5;
 const DEFAULT_SORT_TYPE = 'default';
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class FilmsPresenter {
   #container = null;
@@ -33,6 +38,7 @@ export default class FilmsPresenter {
   #renderedFilmCardsCount = FILM_CARDS_COUNT_PER_STEP;
   #filmBoardPresenter = new Map();
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(targetContainer, filmCardModel, filmCommentModel, filterModel) {
     this.#container = targetContainer;
@@ -48,18 +54,13 @@ export default class FilmsPresenter {
   get filmCards() {
     this.#filterType = this.#filterModel.filterType;
     const filmCards = this.#cardModel.filmCards;
-    const filteredFilmCards = filmCards.filter((el) => {
-      if (this.#filterType === 'filmCards') {
-        return true;
-      }
-      return el.userDetails[this.#filterType];
-    });
+    const filteredFilmCards = this.#filterType === 'filmCards' ? filmCards : filmCards.filter((el) => el.userDetails[this.#filterType]);
 
     switch (this.#currentSortType) {
       case SortType.DATE:
-        return filteredFilmCards.sort((a, b) => dayjs(a.filmInfo.release[this.#currentSortType]).isBefore(dayjs(b.filmInfo.release[this.#currentSortType])) ? 1 : -1);
+        return filteredFilmCards.slice().sort((a, b) => dayjs(a.filmInfo.release[this.#currentSortType]).isBefore(dayjs(b.filmInfo.release[this.#currentSortType])) ? 1 : -1);
       case SortType.RATING:
-        return filteredFilmCards.sort((a, b) => b.filmInfo[this.#currentSortType] - a.filmInfo[this.#currentSortType]);
+        return filteredFilmCards.slice().sort((a, b) => b.filmInfo[this.#currentSortType] - a.filmInfo[this.#currentSortType]);
     }
     return filteredFilmCards;
   }
@@ -108,7 +109,7 @@ export default class FilmsPresenter {
     this.#sortSection = new SortView(this.#currentSortType);
     this.#sortSection.setClickHandler(this.#handleSortClick);
     if (prevSortSection === null) {
-      render(this.#sortSection, document.querySelector('.main'), RenderPosition.AFTERBEGIN);
+      render(this.#sortSection, document.querySelector('.main-navigation'), RenderPosition.AFTEREND);
       return;
     }
 
@@ -153,24 +154,42 @@ export default class FilmsPresenter {
     });
   };
 
-  #handleViewAction = (actionType, updateType, update, commentId) => {
+  #handleViewAction = async (actionType, updateType, update, additionalData) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_CARD:
-        this.#cardModel.updateCard(updateType, update);
+        try {
+          await this.#cardModel.updateCard(updateType, update);
+        } catch (err) {
+          this.#filmBoardPresenter.get(update.id).setControlToggleAborting(additionalData);
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#commentModel.deleteComment(updateType, update, commentId);
+        try {
+          await this.#commentModel.deleteComment(updateType, update, additionalData);
+        } catch (err) {
+          this.#filmBoardPresenter.get(update.id).setCommentDeleteAborting(additionalData);
+        }
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentModel.addComment(updateType, update);
+        try {
+          await this.#commentModel.addComment(updateType, additionalData);
+        } catch (err) {
+          const filmPopup = this.#filmBoardPresenter.get(additionalData.filmId).filmPopupComponent;
+          filmPopup.renderFilmComments(filmPopup.state.comments);
+          this.#filmBoardPresenter.get(additionalData.filmId).setCommentAddAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = (updateType, updateData) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#filmBoardPresenter.get(data.id).init(data);
+        this.#filmBoardPresenter.get(updateData.id).init(updateData);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
