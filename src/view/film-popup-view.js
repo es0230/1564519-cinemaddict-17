@@ -180,7 +180,7 @@ export default class FilmPopupView extends AbstractStatefulView{
     isCommentAdding: false,
   });
 
-  static parseStateToCard = (filmCardState) => { // при закрытии
+  static parseStateToCard = (filmCardState) => {
     const filmCard = {...filmCardState};
     filmCard.comments = filmCardState.commentIds;
 

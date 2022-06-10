@@ -44,14 +44,4 @@ export default class FilmCommentView extends AbstractStatefulView {
   _restoreHandlers = () => {
 
   };
-
-  //setDeleteClickHandler = (callback) => {
-  //  this._callback.deleteClick = callback;
-  //  this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#deleteClickHandler);
-  //};
-
-  //#deleteClickHandler = (evt) => {
-  //  evt.preventDefault();
-  //  this._callback.deleteClick(this);
-  //};
 }

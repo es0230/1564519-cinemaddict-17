@@ -6,6 +6,7 @@ import {SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME} from '../const.js';
 dayjs.extend(duration);
 
 const ACTIVE_CONTROL_ITEM_CLASS = 'film-card__controls-item--active';
+const DESCRIPTION_MAX_LENGTH = 140;
 
 const createFilmCardTemplate = (filmCard) => {
   const {title, totalRating, poster, release, runtime, genre, description} = filmCard.filmInfo;
@@ -22,7 +23,7 @@ const createFilmCardTemplate = (filmCard) => {
                 <span class="film-card__genre">${genre.join(', ')}</span>
               </p>
               <img src="${poster}" alt="" class="film-card__poster">
-              <p class="film-card__description">${description.length > 140 ? description.slice(0, 140).concat('...') : description}</p>
+              <p class="film-card__description">${description.length > DESCRIPTION_MAX_LENGTH ? description.slice(0, DESCRIPTION_MAX_LENGTH).concat('...') : description}</p>
               <span class="film-card__comments">${comments.length} comment${comments.length !== 1 ? 's' : ''}</span>
             </a>
             <div class="film-card__controls">

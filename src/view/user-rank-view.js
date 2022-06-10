@@ -1,12 +1,15 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+const NOVICE_FILMS_COUNT = 10;
+const FAN_FILMS_COUNT = 20;
+
 const createUserRatingTemplate = (watchedFilmsCount) => {
   let userRank;
   switch (true) {
-    case (watchedFilmsCount < 10):
+    case (watchedFilmsCount < NOVICE_FILMS_COUNT):
       userRank = 'Novice';
       break;
-    case (watchedFilmsCount < 20):
+    case (watchedFilmsCount < FAN_FILMS_COUNT):
       userRank = 'Fan';
       break;
     default:
