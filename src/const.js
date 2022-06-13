@@ -1,10 +1,3 @@
-const COMMENT_EMOTIONS = [
-  'smile',
-  'sleeping',
-  'puke',
-  'angry'
-];
-
 const SortType = {
   DEFAULT: 'default',
   DATE: 'date',
@@ -38,7 +31,6 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
-
 const RequestMethod = {
   GET: 'GET',
   PUT: 'PUT',
@@ -52,4 +44,4 @@ const SHAKE_ANIMATION_TIMEOUT = 600;
 const AUTHORIZATION = 'Basic qsdf261q3llpf099';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
-export { SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME, RequestMethod, AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType, COMMENT_EMOTIONS};
+export { SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME, RequestMethod, AUTHORIZATION, END_POINT, FilterType, UserAction, UpdateType, EmojiTypes, SortType};

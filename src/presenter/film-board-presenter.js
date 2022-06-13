@@ -1,6 +1,6 @@
 import UserRankView from '../view/user-rank-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
-import FilmsListSectionView from '../view/films-list-view.js';
+import FilmsListSectionView from '../view/films-list-section-view.js';
 import NoFilmCardsView from '../view/no-film-cards-view.js';
 import SortView from '../view/sort-view.js';
 import FilmCardPresenter from './film-presenter.js';

@@ -22,7 +22,7 @@ export default class FilmCardModel extends Observable{
     } catch(err) {
       this.#filmCards = [];
     }
-    this._notify(UpdateType.INIT);
+    this._notify(UpdateType.INIT, this.#filmCards);
   };
 
   updateCard = async (updateType, update) => {

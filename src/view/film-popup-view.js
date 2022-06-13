@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import FilmCommentView from '../view/film-popup-comment-view.js';
+import FilmCommentView from './film-comment-view.js';
 import { render } from '../framework/render.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
