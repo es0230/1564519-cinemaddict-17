@@ -1,6 +1,8 @@
 import ApiService from '../framework/api-service.js';
 import { RequestMethod } from '../const.js';
 
+const SUCCESSFUL_RESPONSE_STATUS = 200;
+
 export default class FilmCommentsApiService extends ApiService {
   #filmCards = null;
 
@@ -16,21 +18,16 @@ export default class FilmCommentsApiService extends ApiService {
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
-    return response.status === 200;
+    return response.status === SUCCESSFUL_RESPONSE_STATUS;
   };
 
-  addComment = async (filmId, localComment) => {
-    const response = await this._load({
+  addComment = async (filmId, localComment) =>
+    await this._load({
       url: `comments/${filmId}`,
       method: RequestMethod.POST,
       body: JSON.stringify(this.#adaptToServer(localComment)),
       headers: new Headers({'Content-Type': 'application/json'}),
-    });
-
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
-  };
+    }).then(ApiService.parseResponse);
 
   #adaptToServer = (comment) => {
     const adaptedComment = {
